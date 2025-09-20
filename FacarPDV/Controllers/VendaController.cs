@@ -11,9 +11,11 @@ namespace FacarPDV.Controllers
             return View();
         }
 
-        public IActionResult Venda()
-        {
+        public IActionResult Venda() {
             return View();
+        }
+        public IActionResult Caixa() {
+            return View(); 
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

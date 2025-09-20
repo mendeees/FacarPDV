@@ -1,0 +1,189 @@
+﻿@{
+    ViewData["Title"] = "Pesquisa de Vendas";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="card shadow border-0">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4 class="mb-0">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-2">
+                                <label class="form-label">Código</label>
+                                <input class="form-control" placeholder="V-0001" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cliente</label>
+                                <input class="form-control" placeholder="Nome do cliente" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Pagamento</label>
+                                <select class="form-select">
+                                    <option>Todos</option>
+                                    <option>Dinheiro</option>
+                                    <option>Cartão</option>
+                                    <option>Pix</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Status</label>
+                                <select class="form-select">
+                                    <option>Todos</option>
+                                    <option>Pago</option>
+                                    <option>Pendente</option>
+                                    <option>Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Período</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control" />
+                                    <span class="input-group-text">até</span>
+                                    <input type="date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="button" class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
+                            <button type="reset" class="btn btn-outline-secondary">Limpar</button>
+                            <button type="button" class="btn btn-outline-success"><i class="bi bi-printer"></i> Imprimir</button>
+                            <button type="button" class="btn btn-outline-warning"><i class="bi bi-file-earmark-spreadsheet"></i> Exportar</button>
+                        </div>
+                    </form>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Cliente</th>
+                                            <th>Data/Hora</th>
+                                            <th>Pagamento</th>
+                                            <th class="text-end">Valor</th>
+                                            <th class="text-center">Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>V-1010</td>
+                                            <td>Ana Lima</td>
+                                            <td>20/09/2025 10:00</td>
+                                            <td>Pix</td>
+                                            <td class="text-end">R$ 159,90</td>
+                                            <td class="text-center"><span class="badge bg-success">Pago</span></td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#mdDetalhe">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>V-1011</td>
+                                            <td>Bruno</td>
+                                            <td>20/09/2025 11:15</td>
+                                            <td>Cartão</td>
+                                            <td class="text-end">R$ 89,50</td>
+                                            <td class="text-center"><span class="badge bg-success">Pago</span></td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#mdDetalhe">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="table-danger">
+                                            <td>V-1012</td>
+                                            <td>Carla</td>
+                                            <td>20/09/2025 12:00</td>
+                                            <td>Dinheiro</td>
+                                            <td class="text-end">R$ 60,00</td>
+                                            <td class="text-center"><span class="badge bg-danger">Cancelado</span></td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#mdDetalhe">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav aria-label="Paginação">
+                                <ul class="pagination">
+                                    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                                    <li class="page-item active"><span class="page-link">1</span></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">Próxima</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-header bg-light d-flex justify-content-between">
+                                    <strong>Resumo</strong>
+                                    <span class="badge bg-secondary">3 registros</span>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Total Pago</span><span>R$ 249,40</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Cancelado</span><span>R$ 60,00</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between fw-bold">
+                                        <span>Período</span><span>20/09/2025</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="alert alert-info">
+                                Clique no <i class="bi bi-eye"></i> para ver detalhes do pedido.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="mdDetalhe" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes do Pedido #PED-1010</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr><th>Produto</th><th>Qtd</th><th class="text-end">Preço</th><th class="text-end">Subtotal</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Produto X</td><td>2</td><td class="text-end">R$ 49,95</td><td class="text-end">R$ 99,90</td></tr>
+                            <tr><td>Produto Y</td><td>1</td><td class="text-end">R$ 60,00</td><td class="text-end">R$ 60,00</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div class="text-end">
+                        <div><strong>Total:</strong> R$ 159,90</div>
+                        <div><small class="text-muted">Pagamento: Pix</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary"><i class="bi bi-printer"></i> Imprimir</button>
+                <button class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
