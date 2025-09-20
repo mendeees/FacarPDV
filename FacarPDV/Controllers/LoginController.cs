@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FacarPDV.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FacarPDV.Controllers
 {
@@ -20,6 +22,12 @@ namespace FacarPDV.Controllers
 
             ViewBag.Erro = "Usuário ou senha inválidos!";
             return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

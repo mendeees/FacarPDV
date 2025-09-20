@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Ponto de Venda";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="RegistrarVenda" method="post" autocomplete="off">
+                        <div class="row mb-4">
+                            <div class="col-md-2">
+                                <label for="codigoCliente" class="form-label">Cód. Cliente</label>
+                                <input type="text" id="codigoCliente" name="codigoCliente" class="form-control" placeholder="Código Cliente" />
+                            </div>
+
+                            <div class="col-md-10">
+                                <label for="nome" class="form-label">Nome</label>
+                                <div class="input-group">
+                                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome do cliente" readonly />
+                                    <button type="button" class="btn btn-outline-warning">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 align-items-end">
+                            <div class="col-md-2">
+                                <label for="codigoProduto" class="form-label">Cód. Produto</label>
+                                <input type="text" id="codigoProduto" name="codigoProduto" class="form-control" placeholder="Código Produto" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="produto" class="form-label">Produto</label>
+                                <div class="input-group">
+                                    <input type="text" id="produto" name="produto" class="form-control" placeholder="Nome do produto" readonly />
+                                    <button type="button" class="btn btn-outline-warning">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" id="quantidade" name="quantidade" class="form-control" value="1" min="1" required placeholder="Qtd" />
+                            </div>
+
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-cart-plus"></i> Adicionar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Produto</th>
+                                    <th class="text-center">Qtde</th>
+                                    <th class="text-end">Preço Unit.</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        Nenhum item adicionado
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <h5>Total: <span class="fw-bold">R$ 0,00</span></h5>
+                        <button class="btn btn-success px-4">
+                            <i class="bi bi-cash-coin"></i> Finalizar Venda
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

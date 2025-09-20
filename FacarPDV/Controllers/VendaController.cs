@@ -4,14 +4,14 @@ using System.Diagnostics;
 
 namespace FacarPDV.Controllers
 {
-    public class CadastroController : Controller
+    public class VendaController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult CadastroProduto()
+        public IActionResult Venda()
         {
             return View();
         }
@@ -21,6 +21,5 @@ namespace FacarPDV.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
     }
 }
