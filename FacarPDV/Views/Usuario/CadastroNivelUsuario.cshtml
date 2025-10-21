@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<FacarPDV.Models.NivelUsuario>
+@{
     ViewData["Title"] = "Cadastro de Nível de Usuário";
 }
 
@@ -40,11 +41,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td colspan="3" class="text-center text-muted">
-                                            Nenhum nível cadastrado
-                                        </td>
-                                    </tr>
+                                    @if (Model != null && Model.Any())
+                                    {
+                                        foreach (var nivel in Model)
+                                        {
+                                            <tr>
+                                                <td class="text-center">@nivel.NivelId</td>
+                                                <td>@nivel.Descricao</td>
+                                                <td class="text-center">
+                                                    <a asp-action="AlterarNivelUsuario" asp-route-id="@nivel.NivelId" class="btn btn-warning btn-sm me-1">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <a asp-action="ExcluirNivelUsuario" asp-route-id="@nivel.NivelId class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">
+                                                Nenhum nível cadastrado
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

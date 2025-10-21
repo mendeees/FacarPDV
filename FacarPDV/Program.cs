@@ -1,9 +1,15 @@
+using FacarPDV.Data;
+using dotenv.net; // se você usa o pacote dotenv.net
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddDbContext<FacarPdvContext>();
+builder.Services.AddControllersWithViews();
 var app = builder.Build();
+
+DotEnv.Load();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
