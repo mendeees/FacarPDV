@@ -1,11 +1,20 @@
-﻿using FacarPDV.Models;
+﻿using Domain.Domain;
+using Domain.EF;
+using FacarPDV.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace FacarPDV.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly Context _context;
+
+        public LoginController(Context context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -13,22 +22,21 @@ namespace FacarPDV.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string login, string senha)
+        public async Task<IActionResult> Index(string login, string senha)
         {
-            if (login == "admin" && senha == "123")
+            // Busca no banco o usuário com o login e senha informados
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Login == login && u.Senha == senha);
+
+            if (usuario != null)
             {
+                // Login correto → redireciona
                 return RedirectToAction("Index", "Home");
             }
 
+            // Login incorreto → mostra mensagem
             ViewBag.Erro = "Usuário ou senha inválidos!";
             return View();
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }
-

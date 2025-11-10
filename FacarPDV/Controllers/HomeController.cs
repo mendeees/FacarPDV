@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using FacarPDV.Models;
+using Domain.Domain;
+using Domain.EF;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FacarPDV.Controllers

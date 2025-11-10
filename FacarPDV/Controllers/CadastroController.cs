@@ -1,26 +1,29 @@
-﻿using FacarPDV.Models;
+﻿using Domain.Domain;
+using Domain.EF;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace FacarPDV.Controllers
 {
     public class CadastroController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        private readonly Context _context;
+        public CadastroController(Context context) => _context = context;
 
+        // GET: /Cadastro/CadastroProduto
         public IActionResult CadastroProduto()
         {
-            return View();
+            return View(new Produtos()); // casa com @model Produtos
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        // POST: /Cadastro/CreateProduto
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateProduto(Produtos produto)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            if (!ModelState.IsValid) return View("CadastroProduto", produto);
 
+            produto.Salvar(_context);
+            return RedirectToAction(nameof(CadastroProduto));
+        }
     }
 }

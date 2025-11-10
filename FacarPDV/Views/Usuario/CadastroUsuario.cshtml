@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Domain.Domain.Usuarios
+
+@{
     ViewData["Title"] = "Cadastro de Usuário";
 }
 
@@ -11,28 +13,31 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <form asp-action="Create" method="post" autocomplete="off">
+                    <form asp-action="CadastroUsuario" method="post" autocomplete="off">
                         <div class="row mb-3">
                             <div class="col-md-10">
-                                <label for="nome" class="form-label">Nome</label>
-                                <input type="text" name="nome" id="nome" class="form-control" placeholder="Digite o nome" required />
+                                <label for="Nome" class="form-label">Nome</label>
+                                <input asp-for="Nome" id="Nome" class="form-control" placeholder="Digite o nome" required />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="login" class="form-label">Login</label>
-                                <input type="text" name="login" id="login" class="form-control" placeholder="Digite o login" required />
+                                <label for="Login" class="form-label">Login</label>
+                                <input asp-for="Login" id="Login" class="form-control" placeholder="Digite o login" required />
+                                <span asp-validation-for="Login" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="senha" class="form-label">Senha</label>
+                                <label for="Senha" class="form-label">Senha</label>
                                 <div class="input-group">
-                                    <input type="password" name="senha" id="senha" class="form-control" placeholder="Digite a senha" required />
+                                    <input asp-for="Senha" id="Senha" type="password" class="form-control" placeholder="Digite a senha" required />
                                     <button type="button" class="btn btn-outline-warning" id="toggleSenha">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
+                                <span asp-validation-for="Senha" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -44,6 +49,7 @@
                                 <i class="bi bi-x-circle"></i> Cancelar
                             </a>
                         </div>
+                        @Html.AntiForgeryToken()
                     </form>
                 </div>
             </div>
@@ -52,8 +58,9 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        const senhaInput = document.getElementById("senha");
+        const senhaInput = document.getElementById("Senha");
         const toggleSenha = document.getElementById("toggleSenha");
         const icon = toggleSenha.querySelector("i");
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FacarPDV.Models.NivelUsuario>
+﻿@model IEnumerable<Domain.Domain.NivelUsuario>
 @{
     ViewData["Title"] = "Cadastro de Nível de Usuário";
 }
@@ -43,21 +43,24 @@
                                 <tbody>
                                     @if (Model != null && Model.Any())
                                     {
-                                        foreach (var nivel in Model)
+                                        @foreach (var nivel in Model)
                                         {
                                             <tr>
-                                                <td class="text-center">@nivel.NivelId</td>
+                                                <td class="text-center">@nivel.Id</td>
                                                 <td>@nivel.Descricao</td>
                                                 <td class="text-center">
-                                                    <a asp-action="AlterarNivelUsuario" asp-route-id="@nivel.NivelId" class="btn btn-warning btn-sm me-1">
+                                                    <a asp-action="AlterarNivelUsuario" asp-route-id="@nivel.Id"
+                                                       class="btn btn-warning btn-sm me-1">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <a asp-action="ExcluirNivelUsuario" asp-route-id="@nivel.NivelId class="btn btn-danger btn-sm">
+                                                    <a asp-action="ExcluirNivelUsuario" asp-route-id="@nivel.Id"
+                                                       class="btn btn-danger btn-sm">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </td>
                                             </tr>
                                         }
+
                                     }
                                     else
                                     {

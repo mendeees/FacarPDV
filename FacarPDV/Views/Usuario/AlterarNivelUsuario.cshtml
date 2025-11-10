@@ -1,5 +1,9 @@
-﻿@{
+﻿@model IEnumerable<Domain.Domain.Usuarios>
+@using Domain.Domain
+
+@{
     ViewData["Title"] = "Alterar Nível de Usuário";
+    var niveis = ViewBag.Niveis as List<NivelUsuario>;
 }
 
 <div class="container mt-5">
@@ -11,45 +15,39 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <form asp-action="UpdateNivelUsuario" method="post" autocomplete="off">
-                        <div class="row mb-4">
+
+                    <!-- === BUSCA (apenas pesquisa) === -->
+                    <form asp-action="AlterarNivelUsuario" method="get" autocomplete="off" class="mb-4">
+                        <div class="row g-2">
                             <div class="col-md-2">
-                                <label for="codigoUsuario" class="form-label">Código</label>
-                                <input type="text" id="codigoUsuario" name="codigoUsuario" class="form-control" placeholder="Cód. Usuário" />
+                                <label for="codigo" class="form-label">Código</label>
+                                <input type="number" id="codigo" name="codigo"
+                                       value="@(ViewBag.Codigo ?? "")"
+                                       class="form-control" placeholder="Cód. Usuário" />
                             </div>
 
                             <div class="col-md-6">
-                                <label for="nome" class="form-label">Nome</label>
+                                <label for="q" class="form-label">Nome ou login</label>
                                 <div class="input-group">
-                                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome do Usuário" readonly />
-                                    <button type="button" class="btn btn-outline-warning">
-                                        <i class="bi bi-search"></i>
+                                    <input type="text" id="q" name="q"
+                                           value="@(ViewBag.Q ?? "")"
+                                           class="form-control" placeholder="Buscar por nome ou login..." />
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        <i class="bi bi-search"></i> Buscar
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="nivel" class="form-label">Nível de Usuário</label>
-                                <select id="nivel" name="nivel" class="form-select" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="1">Administrador</option>
-                                    <option value="2">Caixa</option>
-                                    <option value="3">Supervisor</option>
-                                </select>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <a asp-action="AlterarNivelUsuario" class="btn btn-outline-dark ms-auto">
+                                    Limpar
+                                </a>
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-success me-2 px-4">
-                                <i class="bi bi-check-circle"></i> Salvar Alterações
-                            </button>
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-danger px-4">
-                                <i class="bi bi-x-circle"></i> Cancelar
-                            </a>
-                        </div>
                     </form>
+                    <!-- === /BUSCA === -->
 
-                    <div class="mt-5">
+                    <div>
                         <h5 class="fw-bold text-dark mb-3">Usuários cadastrados</h5>
                         <div class="table-responsive">
                             <table class="table table-striped">
@@ -63,11 +61,48 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var u in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@u.Id</td>
+                                            <td>@u.Nome</td>
+                                            <td class="text-center">@u.Login</td>
+                                            <td class="text-center">@u.Nivel?.Descricao</td>
+                                            <td class="text-center">
+                                                <!-- ÚNICO local que salva -->
+                                                <form asp-action="SalvarNivelUsuario" method="post" class="d-inline-flex">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@u.Id" />
+                                                    <select name="nivelId" class="form-select form-select-sm me-2" required>
+                                                        <option value="">Selecione...</option>
+                                                        @if (niveis != null)
+                                                        {
+                                                            foreach (var n in niveis)
+                                                            {
+                                                                    <option value="@n.Id" selected="@(u.NivelId == n.Id ? "selected" : null)">
+                                                                        @n.Descricao
+                                                                    </option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-check2-circle"></i> Salvar
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
                                     <tr>
                                         <td colspan="5" class="text-center text-muted">
                                             Nenhum usuário encontrado
                                         </td>
                                     </tr>
+                                }
                                 </tbody>
                             </table>
                         </div>

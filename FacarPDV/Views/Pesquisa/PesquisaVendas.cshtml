@@ -1,5 +1,18 @@
-﻿@{
+﻿@model IEnumerable<FacarPDV.Models.VendaListItemVM>
+@{
     ViewData["Title"] = "Pesquisa de Vendas";
+
+    // Dados auxiliares vindos do controller (opcional)
+    var totalRegistros = ViewBag.TotalRegistros as int? ?? Model.Count();
+    var totalPago = ViewBag.TotalPago as decimal? ?? Model.Where(x => x.Status == "Pago").Sum(x => x.Valor);
+    var totalCancelado = ViewBag.TotalCancelado as decimal? ?? Model.Where(x => x.Status == "Cancelado").Sum(x => x.Valor);
+
+    string qCodigo = ViewBag.FiltroCodigo as string ?? "";
+    string qCliente = ViewBag.FiltroCliente as string ?? "";
+    string qPagamento = ViewBag.FiltroPagamento as string ?? "Todos";
+    string qStatus = ViewBag.FiltroStatus as string ?? "Todos";
+    string qDe = ViewBag.FiltroDe as string ?? "";
+    string qAte = ViewBag.FiltroAte as string ?? "";
 }
 
 <div class="container mt-5">
@@ -11,47 +24,48 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <form class="mb-4">
+                    <!-- FILTROS (GET) -->
+                    <form method="get" asp-action="PesquisaVendas" class="mb-4">
                         <div class="row g-3">
                             <div class="col-md-2">
                                 <label class="form-label">Código</label>
-                                <input class="form-control" placeholder="V-0001" />
+                                <input name="codigo" class="form-control" value="@qCodigo" placeholder="V-0001" />
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Cliente</label>
-                                <input class="form-control" placeholder="Nome do cliente" />
+                                <input name="cliente" class="form-control" value="@qCliente" placeholder="Nome do cliente" />
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Pagamento</label>
-                                <select class="form-select">
-                                    <option>Todos</option>
-                                    <option>Dinheiro</option>
-                                    <option>Cartão</option>
-                                    <option>Pix</option>
+                                <select name="pagamento" class="form-select">
+                                    @foreach (var p in new[] { "Todos", "Dinheiro", "Cartão", "Pix" })
+                                    {
+                                        <option value="@p" selected="@(qPagamento == p)">@p</option>
+                                    }
                                 </select>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Status</label>
-                                <select class="form-select">
-                                    <option>Todos</option>
-                                    <option>Pago</option>
-                                    <option>Pendente</option>
-                                    <option>Cancelado</option>
+                                <select name="status" class="form-select">
+                                    @foreach (var s in new[] { "Todos", "Pago", "Pendente", "Cancelado" })
+                                    {
+                                        <option value="@s" selected="@(qStatus == s)">@s</option>
+                                    }
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Período</label>
                                 <div class="input-group">
-                                    <input type="date" class="form-control" />
+                                    <input type="date" name="de" value="@qDe" class="form-control" />
                                     <span class="input-group-text">até</span>
-                                    <input type="date" class="form-control" />
+                                    <input type="date" name="ate" value="@qAte" class="form-control" />
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex gap-2 mt-3">
-                            <button type="button" class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
-                            <button type="reset" class="btn btn-outline-secondary">Limpar</button>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
+                            <a asp-action="PesquisaVendas" class="btn btn-outline-secondary">Limpar</a>
                             <button type="button" class="btn btn-outline-success"><i class="bi bi-printer"></i> Imprimir</button>
                             <button type="button" class="btn btn-outline-warning"><i class="bi bi-file-earmark-spreadsheet"></i> Exportar</button>
                         </div>
@@ -69,77 +83,91 @@
                                             <th>Pagamento</th>
                                             <th class="text-end">Valor</th>
                                             <th class="text-center">Status</th>
-                                            <th></th>
+                                            <th class="text-end">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>V-1010</td>
-                                            <td>Ana Lima</td>
-                                            <td>20/09/2025 10:00</td>
-                                            <td>Pix</td>
-                                            <td class="text-end">R$ 159,90</td>
-                                            <td class="text-center"><span class="badge bg-success">Pago</span></td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#mdDetalhe">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>V-1011</td>
-                                            <td>Bruno</td>
-                                            <td>20/09/2025 11:15</td>
-                                            <td>Cartão</td>
-                                            <td class="text-end">R$ 89,50</td>
-                                            <td class="text-center"><span class="badge bg-success">Pago</span></td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#mdDetalhe">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr class="table-danger">
-                                            <td>V-1012</td>
-                                            <td>Carla</td>
-                                            <td>20/09/2025 12:00</td>
-                                            <td>Dinheiro</td>
-                                            <td class="text-end">R$ 60,00</td>
-                                            <td class="text-center"><span class="badge bg-danger">Cancelado</span></td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#mdDetalhe">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        @if (!Model.Any())
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Nenhuma venda encontrada</td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            foreach (var v in Model)
+                                            {
+                                                var badge = v.Status switch
+                                                {
+                                                    "Pago" => "success",
+                                                    "Cancelado" => "danger",
+                                                    "Pendente" => "warning",
+                                                    _ => "secondary"
+                                                };
+                                                <tr class="@(v.Status == "Cancelado" ? "table-danger" : null)">
+                                                    <td>@v.Codigo</td>
+                                                    <td>@v.Cliente</td>
+                                                    <td>@v.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                                                    <td>@(string.IsNullOrEmpty(v.Pagamento) ? "-" : v.Pagamento)</td>
+                                                    <td class="text-end">@v.Valor.ToString("C")</td>
+                                                    <td class="text-center"><span class="badge bg-@badge">@v.Status</span></td>
+                                                    <td class="text-end">
+                                                        <button class="btn btn-sm btn-outline-primary"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#mdDetalhe"
+                                                                data-id="@v.Id"
+                                                                data-codigo="@v.Codigo">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
                                     </tbody>
                                 </table>
                             </div>
-                            <nav aria-label="Paginação">
-                                <ul class="pagination">
-                                    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
-                                    <li class="page-item active"><span class="page-link">1</span></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">Próxima</a></li>
-                                </ul>
-                            </nav>
+
+                            @* Paginação simples opcional *@
+                            @if (ViewBag.HasPaging == true)
+                            {
+                                <nav aria-label="Paginação" class="mt-2">
+                                    <ul class="pagination">
+                                        <li class="page-item @(ViewBag.Page <= 1 ? "disabled" : null)">
+                                            <a class="page-link" asp-action="PesquisaVendas"
+                                               asp-route-page="@(ViewBag.Page - 1)"
+                                               asp-route-codigo="@qCodigo" asp-route-cliente="@qCliente"
+                                               asp-route-pagamento="@qPagamento" asp-route-status="@qStatus"
+                                               asp-route-de="@qDe" asp-route-ate="@qAte">Anterior</a>
+                                        </li>
+                                        <li class="page-item active"><span class="page-link">@ViewBag.Page</span></li>
+                                        <li class="page-item @(ViewBag.Page >= ViewBag.Pages ? "disabled" : null)">
+                                            <a class="page-link" asp-action="PesquisaVendas"
+                                               asp-route-page="@(ViewBag.Page + 1)"
+                                               asp-route-codigo="@qCodigo" asp-route-cliente="@qCliente"
+                                               asp-route-pagamento="@qPagamento" asp-route-status="@qStatus"
+                                               asp-route-de="@qDe" asp-route-ate="@qAte">Próxima</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
                         </div>
+
                         <div class="col-lg-4">
                             <div class="card border-0 shadow-sm mb-3">
                                 <div class="card-header bg-light d-flex justify-content-between">
                                     <strong>Resumo</strong>
-                                    <span class="badge bg-secondary">3 registros</span>
+                                    <span class="badge bg-secondary">@totalRegistros registro(s)</span>
                                 </div>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item d-flex justify-content-between">
-                                        <span>Total Pago</span><span>R$ 249,40</span>
+                                        <span>Total Pago</span><span>@totalPago.ToString("C")</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between">
-                                        <span>Cancelado</span><span>R$ 60,00</span>
+                                        <span>Cancelado</span><span>@totalCancelado.ToString("C")</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between fw-bold">
-                                        <span>Período</span><span>20/09/2025</span>
+                                        <span>Período</span>
+                                        <span>@(string.IsNullOrEmpty(qDe) && string.IsNullOrEmpty(qAte) ? "—" : $"{qDe} a {qAte}")</span>
                                     </li>
                                 </ul>
                             </div>
@@ -154,30 +182,18 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL DETALHE -->
 <div class="modal fade" id="mdDetalhe" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalhes do Pedido #PED-1010</h5>
+                <h5 class="modal-title">Detalhes da venda</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead class="table-light">
-                            <tr><th>Produto</th><th>Qtd</th><th class="text-end">Preço</th><th class="text-end">Subtotal</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Produto X</td><td>2</td><td class="text-end">R$ 49,95</td><td class="text-end">R$ 99,90</td></tr>
-                            <tr><td>Produto Y</td><td>1</td><td class="text-end">R$ 60,00</td><td class="text-end">R$ 60,00</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <div class="text-end">
-                        <div><strong>Total:</strong> R$ 159,90</div>
-                        <div><small class="text-muted">Pagamento: Pix</small></div>
-                    </div>
+                <div id="detalheConteudo">
+                    <div class="text-muted">Carregando...</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -187,3 +203,25 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        /* Carrega detalhes via GET quando abre o modal */
+        const md = document.getElementById('mdDetalhe');
+        md?.addEventListener('show.bs.modal', evt => {
+            const btn = evt.relatedTarget;
+            const id = btn?.getAttribute('data-id');
+            const codigo = btn?.getAttribute('data-codigo');
+            const alvo = document.getElementById('detalheConteudo');
+            if (!id || !alvo) return;
+
+            document.querySelector('#mdDetalhe .modal-title').textContent = `Detalhes do Pedido ${codigo}`;
+            alvo.innerHTML = '<div class="text-muted">Carregando...</div>';
+
+            fetch(`@Url.Action("DetalheVenda", "Pesquisa")?id=${id}`)
+                .then(r => r.text())
+                .then(html => alvo.innerHTML = html)
+                .catch(() => alvo.innerHTML = '<div class="text-danger">Falha ao carregar detalhes.</div>');
+        });
+    </script>
+}

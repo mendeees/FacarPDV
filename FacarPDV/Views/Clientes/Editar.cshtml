@@ -1,0 +1,55 @@
+﻿@model Domain.Domain.Clientes
+@{
+    ViewData["Title"] = "Editar Cliente";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="Editar" method="post" autocomplete="off">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Nome *</label>
+                            <input asp-for="Nome" class="form-control" required />
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">CPF</label>
+                                <input asp-for="CPF" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Telefone</label>
+                                <input asp-for="Telefone" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">E-mail</label>
+                                <input asp-for="Email" type="email" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a asp-action="CadastroCliente" class="btn btn-outline-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
