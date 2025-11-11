@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Domain.Domain
 {
-    public class Produtos
+    public class Produto
     {
         public int ProdutoId { get; set; }
         public string Nome { get; set; } = string.Empty;
@@ -13,12 +13,12 @@ namespace Domain.Domain
 
         // ---- MÉTODOS CRUD ----
 
-        public List<Produtos> BuscarTodos(Context context)
+        public List<Produto> BuscarTodos(Context context)
         {
             return context.Produto.ToList();
         }
 
-        public Produtos BuscarPorId(Context context, int id)
+        public Produto BuscarPorId(Context context, int id)
         {
             return context.Produto.FirstOrDefault(p => p.ProdutoId == id);
         }

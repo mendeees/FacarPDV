@@ -1,44 +1,78 @@
 ﻿using Domain.EF;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Domain.Domain
 {
-    public class Estoques
+    public class Estoque
     {
         public int Id { get; set; }
         public int ProdutoId { get; set; }
         public int Quantidade { get; set; }
 
-        public Produtos? Produto { get; set; }
+        public Produto? Produto { get; set; }
 
-        // --- MÉTODOS CRUD ---
-        public List<Estoques> BuscarTodos(Context context)
+        /// <summary>
+        /// Dá entrada no estoque de um produto.
+        /// Cria o registro se ele ainda não existir.
+        /// </summary>
+        public static bool EntradaEstoque(Context context, int produtoId, int quantidade)
         {
-            return context.Set<Estoques>().ToList();
-        }
+            if (quantidade <= 0)
+                return false;
 
-        public Estoques BuscarPorId(Context context, int id)
-        {
-            return context.Set<Estoques>().FirstOrDefault(e => e.Id == id);
-        }
+            var estoque = context.Estoque.FirstOrDefault(e => e.ProdutoId == produtoId);
 
-        public void Salvar(Context context)
-        {
-            context.Set<Estoques>().Add(this);
+            if (estoque == null)
+            {
+                // Produto ainda sem estoque registrado
+                estoque = new Estoque
+                {
+                    ProdutoId = produtoId,
+                    Quantidade = quantidade
+                };
+                context.Estoque.Add(estoque);
+            }
+            else
+            {
+                // Atualiza quantidade existente
+                estoque.Quantidade += quantidade;
+            }
+
             context.SaveChanges();
+            return true;
         }
 
-        public void Alterar(Context context)
+        /// <summary>
+        /// Dá saída do estoque do produto, validando saldo antes.
+        /// Retorna false se o produto não existir ou se o saldo for insuficiente.
+        /// </summary>
+        public static bool SaidaEstoque(Context context, int produtoId, int quantidade)
         {
-            context.Set<Estoques>().Update(this);
+            if (quantidade <= 0)
+                return false;
+
+            int saldoAtual = GetSaldo(context, produtoId);
+
+            if (saldoAtual == -1)
+                return false; // Produto sem estoque cadastrado
+
+            if (saldoAtual < quantidade)
+                return false; // Saldo insuficiente
+
+            var estoque = context.Estoque.FirstOrDefault(e => e.ProdutoId == produtoId);
+            estoque.Quantidade -= quantidade;
             context.SaveChanges();
+            return true;
         }
 
-        public void Remover(Context context)
+        /// <summary>
+        /// Retorna o saldo atual de um produto.
+        /// Retorna -1 se o produto não tiver estoque registrado.
+        /// </summary>
+        public static int GetSaldo(Context context, int produtoId)
         {
-            context.Set<Estoques>().Remove(this);
-            context.SaveChanges();
+            var estoque = context.Estoque.FirstOrDefault(e => e.ProdutoId == produtoId);
+            return estoque?.Quantidade ?? -1;
         }
     }
 }

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FacarPDV.Controllers
 {
-    public class ProdutosController : Controller
+    public class ProdutoController : Controller
     {
         private readonly Context _context;
-        public ProdutosController(Context context)
+        public ProdutoController(Context context)
         {
             _context = context;
         }
@@ -15,14 +15,14 @@ namespace FacarPDV.Controllers
         [HttpGet]
         public IActionResult Editar(int id)
         {
-            var produto = new Produtos().BuscarPorId(_context, id);
+            var produto = new Produto().BuscarPorId(_context, id);
             if (produto == null) return NotFound();
             return View(produto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Editar(Produtos produto)
+        public IActionResult Editar(Produto produto)
         {
             if (!ModelState.IsValid)
                 return View(produto);
@@ -36,7 +36,7 @@ namespace FacarPDV.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Excluir(int id)
         {
-            var produto = new Produtos().BuscarPorId(_context, id);
+            var produto = new Produto().BuscarPorId(_context, id);
             if (produto == null) return NotFound();
 
             produto.Remover(_context);

@@ -1,0 +1,116 @@
+﻿@model Domain.Domain.Estoque
+
+@{
+    ViewData["Title"] = "Entrada de Estoque";
+    var produtoId = Model.ProdutoId;
+    var produtoNome = "";
+    if (produtoId > 0)
+    {
+        // Busca o nome do produto usando o contexto do DI
+        var ctx = Context.RequestServices.GetService(typeof(Domain.EF.Context)) as Domain.EF.Context;
+        var prod = ctx?.Produto.FirstOrDefault(p => p.ProdutoId == produtoId);
+        produtoNome = prod?.Nome ?? "";
+    }
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center text-dark">
+                    <h4 class="mb-0">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="Entrada" method="post" autocomplete="off">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="produtoBusca" class="form-label">Produto</label>
+                                <div class="input-group">
+                                    <input type="text" id="produtoNome" class="form-control" value="@produtoNome" placeholder="Selecione o produto" readonly required />
+                                    <input type="hidden" asp-for="ProdutoId" id="produtoId" value="@produtoId" />
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalPesquisaProduto" @(produtoId > 0 ? "disabled" : "")>
+                                        <i class="bi bi-search"></i> Pesquisar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" asp-for="Quantidade" id="quantidade" class="form-control" placeholder="0" min="1" required />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-success me-2 px-4">
+                                <i class="bi bi-box-arrow-in-down"></i> Registrar Entrada
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary px-4">
+                                <i class="bi bi-arrow-left-circle"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pesquisa Produto -->
+<div class="modal fade" id="modalPesquisaProduto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Pesquisar Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="filtroProduto" class="form-control mb-3" placeholder="Filtrar por nome ou código..." />
+                <div id="listaProdutos">
+                    <div class="text-muted">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Carrega lista de produtos ao abrir o modal
+        $('#modalPesquisaProduto').on('show.bs.modal', function () {
+            carregarProdutos('');
+        });
+
+        // Filtra produtos conforme digitação
+        $('#filtroProduto').on('input', function () {
+            carregarProdutos($(this).val());
+        });
+
+        function carregarProdutos(filtro) {
+            $('#listaProdutos').html('<div class="text-muted">Carregando...</div>');
+            $.get('/Pesquisa/BuscarProduto', { termo: filtro }, function (data) {
+                if (!data || data.length === 0) {
+                    $('#listaProdutos').html('<div class="text-danger">Nenhum produto encontrado.</div>');
+                    return;
+                }
+                let html = '<table class="table table-sm table-hover"><thead><tr><th>Código</th><th>Nome</th><th>Preço</th><th></th></tr></thead><tbody>';
+                data.forEach(function (p) {
+                    html += `<tr>
+                        <td>${p.id}</td>
+                        <td>${p.label}</td>
+                        <td>${p.preco ? p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}</td>
+                        <td><button type="button" class="btn btn-warning btn-sm" onclick="selecionarProduto(${p.id}, '${p.label}')">Selecionar</button></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                $('#listaProdutos').html(html);
+            });
+        }
+
+        // Seleciona produto e fecha modal
+        window.selecionarProduto = function (id, nome) {
+            $('#produtoId').val(id);
+            $('#produtoNome').val(nome);
+            $('#modalPesquisaProduto').modal('hide');
+        }
+    </script>
+}

@@ -7,13 +7,12 @@ namespace Domain.EF
     {
         public Context(DbContextOptions<Context> options) : base(options) { }
 
-        public DbSet<Usuarios> Usuarios { get; set; }
+        public DbSet<Usuario> Usuario { get; set; }
         public DbSet<NivelUsuario> NivelUsuario { get; set; }
-        public DbSet<Produtos> Produto { get; set; }
-        public DbSet<Clientes> Clientes { get; set; }
-        public DbSet<Estoques> Estoques { get; set; }
-        public DbSet<Vendas> Vendas { get; set; }
-        public DbSet<ItensVenda> ItensVenda { get; set; }
+        public DbSet<Produto> Produto { get; set; }
+        public DbSet<Cliente> Cliente { get; set; }
+        public DbSet<Estoque> Estoque { get; set; }
+        public DbSet<Venda> Venda { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,23 +21,23 @@ namespace Domain.EF
                 t.ToTable("NivelUsuario");
                 t.HasKey(n => n.Id);
                 t.Property(n => n.Descricao).HasColumnType("varchar(250)").IsRequired();
-                t.HasMany(n => n.Usuarios)
+                t.HasMany(n => n.Usuario)
                     .WithOne(u => u.Nivel)
                     .HasForeignKey(u => u.NivelId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            modelBuilder.Entity<Usuarios>(t =>
+            modelBuilder.Entity<Usuario>(t =>
             {
-                t.ToTable("Usuarios");
+                t.ToTable("Usuario");
                 t.HasKey(u => u.Id);
                 t.Property(u => u.Nome).HasColumnType("varchar(250)").IsRequired();
                 t.Property(u => u.Login).HasColumnType("varchar(20)").IsRequired();
-                t.Property(u => u.Senha).HasColumnType("varchar(10)").IsRequired();
+                t.Property(u => u.Senha).HasColumnType("varchar(255)").IsRequired();
                 t.HasIndex(u => u.Login).IsUnique();
             });
 
-            modelBuilder.Entity<Produtos>(t =>
+            modelBuilder.Entity<Produto>(t =>
             {
                 t.ToTable("Produto");
                 t.HasKey(p => p.ProdutoId);
@@ -47,9 +46,9 @@ namespace Domain.EF
                 t.Property(p => p.Descricao).HasColumnType("varchar(500)").IsRequired();
             });
 
-            modelBuilder.Entity<Clientes>(t =>
+            modelBuilder.Entity<Cliente>(t =>
             {
-                t.ToTable("Clientes");
+                t.ToTable("Cliente");
                 t.HasKey(c => c.Id);
                 t.Property(c => c.Nome).HasColumnType("varchar(250)").IsRequired();
                 t.Property(c => c.CPF).HasColumnType("char(11)");
@@ -57,9 +56,9 @@ namespace Domain.EF
                 t.Property(c => c.Email).HasColumnType("varchar(100)");
             });
 
-            modelBuilder.Entity<Estoques>(t =>
+            modelBuilder.Entity<Estoque>(t =>
             {
-                t.ToTable("Estoques");
+                t.ToTable("Estoque");
                 t.HasKey(e => e.Id);
                 t.Property(e => e.Quantidade).HasColumnType("int").IsRequired();
                 t.HasOne(e => e.Produto)
@@ -69,9 +68,9 @@ namespace Domain.EF
                 t.HasIndex(e => e.ProdutoId).IsUnique();
             });
 
-            modelBuilder.Entity<Vendas>(t =>
+            modelBuilder.Entity<Venda>(t =>
             {
-                t.ToTable("Vendas");
+                t.ToTable("Venda");
                 t.HasKey(v => v.Id);
                 t.Property(v => v.DataEmissao).HasColumnType("datetime").HasDefaultValueSql("GETDATE()");
                 t.Property(v => v.ValorTotal).HasColumnType("decimal(18,2)").HasDefaultValue(0);
@@ -85,9 +84,9 @@ namespace Domain.EF
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
-            modelBuilder.Entity<ItensVenda>(t =>
+            modelBuilder.Entity<ItemVenda>(t =>
             {
-                t.ToTable("ItensVenda");
+                t.ToTable("ItemVenda");
                 t.HasKey(i => i.Id);
                 t.Property(i => i.Quantidade).HasColumnType("int").IsRequired();
                 t.Property(i => i.PrecoUnitario).HasColumnType("decimal(18,2)").IsRequired();

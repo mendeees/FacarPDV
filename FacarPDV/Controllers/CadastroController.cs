@@ -12,13 +12,13 @@ namespace FacarPDV.Controllers
         // GET: /Cadastro/CadastroProduto
         public IActionResult CadastroProduto()
         {
-            return View(new Produtos()); // casa com @model Produtos
+            return View(new Produto()); // casa com @model Produtos
         }
 
         // POST: /Cadastro/CreateProduto
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateProduto(Produtos produto)
+        public IActionResult CreateProduto(Produto produto)
         {
             if (!ModelState.IsValid) return View("CadastroProduto", produto);
 

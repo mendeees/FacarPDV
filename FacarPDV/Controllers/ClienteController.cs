@@ -6,16 +6,16 @@ using System.Linq;
 
 namespace FacarPDV.Controllers
 {
-    public class ClientesController : Controller
+    public class ClienteController : Controller
     {
         private readonly Context _context;
-        public ClientesController(Context context) => _context = context;
+        public ClienteController(Context context) => _context = context;
 
         // GET: /Clientes/CadastroCliente
         [HttpGet]
         public IActionResult CadastroCliente(string q = null)
         {
-            var query = _context.Set<Clientes>().AsNoTracking().AsQueryable();
+            var query = _context.Set<Cliente>().AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(q))
             {
@@ -34,7 +34,7 @@ namespace FacarPDV.Controllers
         // POST: /Clientes/CreateCliente
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateCliente(Clientes cliente)
+        public IActionResult CreateCliente(Cliente cliente)
         {
             if (string.IsNullOrWhiteSpace(cliente.Nome))
                 ModelState.AddModelError(nameof(cliente.Nome), "Informe o nome.");
@@ -51,7 +51,7 @@ namespace FacarPDV.Controllers
         [HttpGet]
         public IActionResult Editar(int id)
         {
-            var cliente = new Clientes().BuscarPorId(_context, id);
+            var cliente = new Cliente().BuscarPorId(_context, id);
             if (cliente == null) return NotFound();
             return View(cliente); // @model Clientes
         }
@@ -59,7 +59,7 @@ namespace FacarPDV.Controllers
         // POST: /Clientes/Editar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Editar(Clientes cliente)
+        public IActionResult Editar(Cliente cliente)
         {
             if (string.IsNullOrWhiteSpace(cliente.Nome))
                 ModelState.AddModelError(nameof(cliente.Nome), "Informe o nome.");
@@ -76,7 +76,7 @@ namespace FacarPDV.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Excluir(int id)
         {
-            var cliente = new Clientes().BuscarPorId(_context, id);
+            var cliente = new Cliente().BuscarPorId(_context, id);
             if (cliente == null) return NotFound();
 
             cliente.Remover(_context);

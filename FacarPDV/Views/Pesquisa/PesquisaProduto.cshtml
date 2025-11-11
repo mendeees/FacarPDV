@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Domain.Domain.Produtos>
+﻿@model IEnumerable<Domain.Domain.Produto>
 @{
     ViewData["Title"] = "Pesquisa de Produto";
 }
@@ -22,7 +22,7 @@
                                        class="form-control" placeholder="Código" />
                             </div>
 
-                            <div class="col-md-8">
+                            <div class="col-md-10">
                                 <label for="nomeProduto" class="form-label">Produto</label>
                                 <div class="input-group">
                                     <input type="text" id="nomeProduto" name="nomeProduto"
@@ -60,14 +60,14 @@
                                             <td>@produto.Preco.ToString("C")</td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a asp-controller="Produtos"
+                                                    <a asp-controller="Produto"
                                                        asp-action="Editar"
                                                        asp-route-id="@produto.ProdutoId"
                                                        class="btn btn-sm btn-primary me-2">
                                                         <i class="bi bi-pencil-square"></i> Editar
                                                     </a>
 
-                                                    <form asp-controller="Produtos"
+                                                    <form asp-controller="Produto"
                                                           asp-action="Excluir"
                                                           method="post"
                                                           onsubmit="return confirm('Tem certeza que deseja excluir este produto?');"

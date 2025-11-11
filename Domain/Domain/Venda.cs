@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Domain.Domain
 {
-    public class Vendas
+    public class Venda
     {
         public int Id { get; set; }
         public int? UsuarioId { get; set; }
@@ -13,36 +13,36 @@ namespace Domain.Domain
         public DateTime DataEmissao { get; set; } = DateTime.Now;
         public decimal ValorTotal { get; set; }
 
-        public Usuarios? Usuario { get; set; }
-        public Clientes? Cliente { get; set; }
-        public ICollection<ItensVenda>? Itens { get; set; }
+        public Usuario? Usuario { get; set; }
+        public Cliente? Cliente { get; set; }
+        public ICollection<ItemVenda>? Itens { get; set; }
 
         // --- MÉTODOS CRUD ---
-        public List<Vendas> BuscarTodos(Context context)
+        public List<Venda> BuscarTodos(Context context)
         {
-            return context.Set<Vendas>().ToList();
+            return context.Set<Venda>().ToList();
         }
 
-        public Vendas BuscarPorId(Context context, int id)
+        public Venda BuscarPorId(Context context, int id)
         {
-            return context.Set<Vendas>().FirstOrDefault(v => v.Id == id);
+            return context.Set<Venda>().FirstOrDefault(v => v.Id == id);
         }
 
         public void Salvar(Context context)
         {
-            context.Set<Vendas>().Add(this);
+            context.Set<Venda>().Add(this);
             context.SaveChanges();
         }
 
         public void Alterar(Context context)
         {
-            context.Set<Vendas>().Update(this);
+            context.Set<Venda>().Update(this);
             context.SaveChanges();
         }
 
         public void Remover(Context context)
         {
-            context.Set<Vendas>().Remove(this);
+            context.Set<Venda>().Remove(this);
             context.SaveChanges();
         }
     }

@@ -35,7 +35,7 @@
                                data-bs-toggle="dropdown" aria-expanded="false">Vendas</a>
                             <ul class="dropdown-menu" aria-labelledby="vendasDropdown">
                                 <li><a class="dropdown-item" asp-controller="Venda" asp-action="Venda">Nova Venda</a></li>
-                                <li><a class="dropdown-item" asp-controller="Venda" asp-action="Caixa">Caixa</a></li>
+                                @* <li><a class="dropdown-item" asp-controller="Venda" asp-action="Caixa">Caixa</a></li> *@
                             </ul>
                         </li>
 
@@ -45,7 +45,17 @@
                                data-bs-toggle="dropdown" aria-expanded="false">Cadastro</a>
                             <ul class="dropdown-menu" aria-labelledby="cadastroDropdown">
                                 <li><a class="dropdown-item" asp-controller="Cadastro" asp-action="CadastroProduto">Produto</a></li>
-                                <li><a class="dropdown-item" asp-controller="Clientes" asp-action="CadastroCliente">Cliente</a></li>
+                                <li><a class="dropdown-item" asp-controller="Cliente" asp-action="CadastroCliente">Cliente</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Estoque -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="estoqueDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">Estoque</a>
+                            <ul class="dropdown-menu" aria-labelledby="estoqueDropdown">
+                                <li><a class="dropdown-item" asp-controller="Estoque" asp-action="Entrada">Entrada</a></li>
+                                <li><a class="dropdown-item" asp-controller="Estoque" asp-action="Saida">Saída</a></li>
                             </ul>
                         </li>
 
@@ -53,7 +63,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="usuariosDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">Usuários</a>
-                            <ul class="dropdown-menu" aria-labelledby="usuariosDropdown">
+                            <ul class="dropdown-menu" aria-labelledby=" bvb usuariosDropdown">
                                 <li><a class="dropdown-item" asp-controller="Usuario" asp-action="CadastroUsuario">Cadastrar Usuário</a></li>
                                 <li><a class="dropdown-item" asp-controller="Usuario" asp-action="CadastroNivelUsuario">Cadastrar Nível</a></li>
                                 <li><a class="dropdown-item" asp-controller="Usuario" asp-action="AlterarNivelUsuario">Alterar Nível</a></li>
@@ -67,6 +77,7 @@
                             <ul class="dropdown-menu" aria-labelledby="pesquisasDropdown">
                                 <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaProduto">Produto</a></li>
                                 <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaVendas">Vendas</a></li>
+                                <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaEstoque">Estoque</a></li>
                                 @* Se criar pesquisa de clientes no futuro:
                             <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaClientes">Clientes</a></li>
                             *@

@@ -15,17 +15,17 @@ namespace FacarPDV.Controllers
         [HttpGet]
         public IActionResult CadastroUsuario()
         {
-            return View(new Usuarios());
+            return View(new Usuario());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CadastroUsuario(Usuarios usuario)
+        public IActionResult CadastroUsuario(Usuario usuario)
         {
             if (!ModelState.IsValid) return View(usuario);
 
             // login único
-            if (_context.Usuarios.Any(u => u.Login == usuario.Login))
+            if (_context.Usuario.Any(u => u.Login == usuario.Login))
             {
                 ModelState.AddModelError(nameof(usuario.Login), "Login já está em uso.");
                 return View(usuario);
@@ -86,7 +86,7 @@ namespace FacarPDV.Controllers
             var nivel = new NivelUsuario().BuscarPorId(_context, id);
             if (nivel == null) return NotFound();
 
-            if (_context.Usuarios.Any(u => u.NivelId == id))
+            if (_context.Usuario.Any(u => u.NivelId == id))
             {
                 TempData["ErroNivel"] = "Não é possível excluir: há usuários nesse nível.";
                 return RedirectToAction(nameof(CadastroNivelUsuario));
@@ -101,7 +101,7 @@ namespace FacarPDV.Controllers
         [HttpGet]
         public IActionResult AlterarNivelUsuario(string q = null, int? codigo = null)
         {
-            var query = _context.Usuarios
+            var query = _context.Usuario
                 .AsNoTracking()
                 .Include(u => u.Nivel)
                 .AsQueryable();
@@ -117,7 +117,7 @@ namespace FacarPDV.Controllers
                     EF.Functions.Like(u.Login, $"%{termo}%"));
             }
 
-            var usuarios = query
+            var usuario = query
                 .OrderBy(u => u.Nome)
                 .ToList();
 
@@ -130,7 +130,7 @@ namespace FacarPDV.Controllers
             ViewBag.Q = q;
             ViewBag.Codigo = codigo;
 
-            return View(usuarios);
+            return View(usuario);
         }
 
         // ===== Salvar alteração de nível (POST separado) =====
@@ -138,7 +138,7 @@ namespace FacarPDV.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult SalvarNivelUsuario(int id, int nivelId)
         {
-            var usuario = _context.Usuarios.Find(id);
+            var usuario = _context.Usuario.Find(id);
             if (usuario == null) return NotFound();
 
             var nivelExiste = _context.NivelUsuario.Any(n => n.Id == nivelId);

@@ -43,13 +43,13 @@ namespace FacarPDV.Controllers
         [HttpGet]
         public IActionResult Venda(int? codigoCliente, string cliente, int? codigoProduto, string produto)
         {
-            Clientes clienteSel = null;
-            Produtos produtoSel = null;
+            Cliente clienteSel = null;
+            Produto produtoSel = null;
 
             if (codigoCliente.HasValue)
-                clienteSel = _context.Set<Clientes>().AsNoTracking().FirstOrDefault(c => c.Id == codigoCliente.Value);
+                clienteSel = _context.Set<Cliente>().AsNoTracking().FirstOrDefault(c => c.Id == codigoCliente.Value);
             else if (!string.IsNullOrWhiteSpace(cliente))
-                clienteSel = _context.Set<Clientes>().AsNoTracking()
+                clienteSel = _context.Set<Cliente>().AsNoTracking()
                                .FirstOrDefault(c => EF.Functions.Like(c.Nome, $"%{cliente.Trim()}%"));
 
             if (codigoProduto.HasValue)
@@ -120,7 +120,7 @@ namespace FacarPDV.Controllers
                 return RedirectToAction(nameof(Venda), new { codigoCliente });
             }
 
-            var cliente = _context.Set<Clientes>().FirstOrDefault(c => c.Id == codigoCliente);
+            var cliente = _context.Set<Cliente>().FirstOrDefault(c => c.Id == codigoCliente);
             if (cliente == null)
             {
                 TempData["Erro"] = "Cliente inválido.";
@@ -128,17 +128,17 @@ namespace FacarPDV.Controllers
             }
 
             // Cria a venda
-            var venda = new Vendas
+            var venda = new Venda
             {
                 ClienteId = cliente.Id,
                 DataEmissao = DateTime.Now,
                 ValorTotal = cart.Sum(i => i.Subtotal)
             };
-            _context.Set<Vendas>().Add(venda);
+            _context.Set<Venda>().Add(venda);
             _context.SaveChanges();
 
             // Salva itens (ajuste o nome da entidade conforme seu projeto)
-            var itens = cart.Select(i => new ItensVenda
+            var itens = cart.Select(i => new ItemVenda
             {
                 VendaId = venda.Id,
                 ProdutoId = i.ProdutoId,
@@ -146,8 +146,14 @@ namespace FacarPDV.Controllers
                 PrecoUnitario = i.Preco
             }).ToList();
 
-            _context.Set<ItensVenda>().AddRange(itens);
+            _context.Set<ItemVenda>().AddRange(itens);
             _context.SaveChanges();
+
+            // --- BAIXA NO ESTOQUE ---
+            foreach (var item in cart)
+            {
+                Estoque.SaidaEstoque(_context, item.ProdutoId, item.Quantidade);
+            }
 
             // Limpa carrinho
             TempData.Remove(CART_KEY);

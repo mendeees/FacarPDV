@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Domain.Domain
 {
-    public class Clientes
+    public class Cliente
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
@@ -13,31 +13,31 @@ namespace Domain.Domain
         public string? Email { get; set; }
 
         // --- MÉTODOS CRUD ---
-        public List<Clientes> BuscarTodos(Context context)
+        public List<Cliente> BuscarTodos(Context context)
         {
-            return context.Set<Clientes>().ToList();
+            return context.Set<Cliente>().ToList();
         }
 
-        public Clientes BuscarPorId(Context context, int id)
+        public Cliente BuscarPorId(Context context, int id)
         {
-            return context.Set<Clientes>().FirstOrDefault(c => c.Id == id);
+            return context.Set<Cliente>().FirstOrDefault(c => c.Id == id);
         }
 
         public void Salvar(Context context)
         {
-            context.Set<Clientes>().Add(this);
+            context.Set<Cliente>().Add(this);
             context.SaveChanges();
         }
 
         public void Alterar(Context context)
         {
-            context.Set<Clientes>().Update(this);
+            context.Set<Cliente>().Update(this);
             context.SaveChanges();
         }
 
         public void Remover(Context context)
         {
-            context.Set<Clientes>().Remove(this);
+            context.Set<Cliente>().Remove(this);
             context.SaveChanges();
         }
     }

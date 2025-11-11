@@ -49,7 +49,7 @@ namespace FacarPDV.Controllers
             string? codigo, string? cliente, string? pagamento = "Todos", string? status = "Todos",
             string? de = null, string? ate = null, int page = 1, int pageSize = 20)
         {
-            var query = _context.Set<Vendas>()
+            var query = _context.Set<Venda>()
                 .AsNoTracking()
                 .Include(v => v.Cliente)
                 .Select(v => new VendaListItemVM
@@ -109,11 +109,56 @@ namespace FacarPDV.Controllers
             return View(vendas);
         }
 
+        // === PESQUISA DE ESTOQUE ===
+        [HttpGet]
+        public IActionResult PesquisaEstoque(string? codigo = null, string? produto = null)
+        {
+            var query = _context.Set<Estoque>()
+                                .AsNoTracking()
+                                .Include(e => e.Produto)
+                                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(codigo))
+            {
+                var cod = codigo.Trim();
+                query = query.Where(e => EF.Functions.Like(e.ProdutoId.ToString(), $"%{cod}%"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(produto))
+            {
+                var nome = produto.Trim().ToLower();
+                query = query.Where(e => e.Produto != null &&
+                                         EF.Functions.Like(e.Produto.Nome.ToLower(), $"%{nome}%"));
+            }
+
+            var estoques = query
+                .OrderBy(e => e.ProdutoId)
+                .ToList();
+
+            ViewBag.TotalRegistros = estoques.Count;
+            ViewBag.TotalQuantidade = estoques.Sum(e => e.Quantidade);
+            ViewBag.FiltroCodigo = codigo;
+            ViewBag.FiltroProduto = produto;
+
+            return View(estoques);
+        }
+
+        [HttpGet]
+        public JsonResult BuscarProduto(string termo)
+        {
+            var produtos = _context.Produto
+                .Where(p => string.IsNullOrEmpty(termo) || p.Nome.Contains(termo) || p.ProdutoId.ToString().Contains(termo))
+                .Select(p => new { id = p.ProdutoId, label = p.Nome, preco = p.Preco })
+                .Take(50)
+                .ToList();
+            return Json(produtos);
+        }
+
         // === DETALHE DE VENDA (usado no modal) ===
         [HttpGet]
         public IActionResult DetalheVenda(int id)
         {
-            var venda = _context.Set<Vendas>()
+            var venda = _context.Set<Venda>()
                 .AsNoTracking()
                 .Include(v => v.Cliente)
                 .Include(v => v.Itens!)
@@ -123,7 +168,7 @@ namespace FacarPDV.Controllers
             if (venda == null)
                 return Content("<div class='text-danger'>Venda não encontrada.</div>", "text/html");
 
-            var itens = venda.Itens ?? new List<ItensVenda>();
+            var itens = venda.Itens ?? new List<ItemVenda>();
 
             var html = $@"
                 <div class='mb-2'>

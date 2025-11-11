@@ -1,8 +1,8 @@
 ﻿@using Domain.Domain
 @{
     ViewData["Title"] = "Ponto de Venda";
-    var clienteSel = ViewBag.Cliente as Clientes;
-    var produtoSel = ViewBag.Produto as Produtos;
+    var clienteSel = ViewBag.Cliente as Cliente;
+    var produtoSel = ViewBag.Produto as Produto;
 
     // Carrinho vindo do controller (TempData JSON -> ViewBag)
     var itens = ViewBag.Itens as List<FacarPDV.Controllers.VendaController.ItemCarrinho> ?? new();

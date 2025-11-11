@@ -25,7 +25,7 @@ namespace FacarPDV.Controllers
         public async Task<IActionResult> Index(string login, string senha)
         {
             // Busca no banco o usuário com o login e senha informados
-            var usuario = await _context.Usuarios
+            var usuario = await _context.Usuario
                 .FirstOrDefaultAsync(u => u.Login == login && u.Senha == senha);
 
             if (usuario != null)

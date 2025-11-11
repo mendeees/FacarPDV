@@ -9,7 +9,7 @@ namespace Domain.Domain
         public int Id { get; set; }
         public string Descricao { get; set; } = string.Empty;
 
-        public ICollection<Usuarios>? Usuarios { get; set; }
+        public ICollection<Usuario>? Usuario { get; set; }
 
         // ---- MÉTODOS CRUD ----
 

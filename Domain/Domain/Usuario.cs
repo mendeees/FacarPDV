@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Domain.Domain
 {
-    public class Usuarios
+    public class Usuario
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
@@ -15,31 +15,31 @@ namespace Domain.Domain
 
         // --- MÉTODOS CRUD ---
 
-        public List<Usuarios> BuscarTodos(Context context)
+        public List<Usuario> BuscarTodos(Context context)
         {
-            return context.Usuarios.ToList();
+            return context.Usuario.ToList();
         }
 
-        public Usuarios BuscarPorId(Context context, int id)
+        public Usuario BuscarPorId(Context context, int id)
         {
-            return context.Usuarios.FirstOrDefault(u => u.Id == id);
+            return context.Usuario.FirstOrDefault(u => u.Id == id);
         }
 
         public void Salvar(Context context)
         {
-            context.Usuarios.Add(this);
+            context.Usuario.Add(this);
             context.SaveChanges();
         }
 
         public void Alterar(Context context)
         {
-            context.Usuarios.Update(this);
+            context.Usuario.Update(this);
             context.SaveChanges();
         }
 
         public void Remover(Context context)
         {
-            context.Usuarios.Remove(this);
+            context.Usuario.Remove(this);
             context.SaveChanges();
         }
     }
