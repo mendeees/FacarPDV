@@ -4,8 +4,7 @@
 
     // Dados auxiliares vindos do controller (opcional)
     var totalRegistros = ViewBag.TotalRegistros as int? ?? Model.Count();
-    var totalPago = ViewBag.TotalPago as decimal? ?? Model.Where(x => x.Status == "Pago").Sum(x => x.Valor);
-    var totalCancelado = ViewBag.TotalCancelado as decimal? ?? Model.Where(x => x.Status == "Cancelado").Sum(x => x.Valor);
+    var totalPago = ViewBag.TotalPago as decimal? ?? Model.Sum(x => x.Valor);
 
     string qCodigo = ViewBag.FiltroCodigo as string ?? "";
     string qCliente = ViewBag.FiltroCliente as string ?? "";
@@ -29,7 +28,7 @@
                         <div class="row g-3">
                             <div class="col-md-2">
                                 <label class="form-label">Código</label>
-                                <input name="codigo" class="form-control" value="@qCodigo" placeholder="V-0001" />
+                                <input name="codigo" class="form-control" value="@qCodigo" placeholder="Ex: 1" />
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Cliente</label>
@@ -59,7 +58,8 @@
                                         <tr>
                                             <th>Código</th>
                                             <th>Cliente</th>
-                                            <th>Data/Hora</th>>
+                                            <th>Data/Hora</th>
+                                            <th>Vendedor</th>
                                             <th class="text-end">Valor</th>
                                             <th class="text-end">Visualizar Itens</th>
                                         </tr>
@@ -79,6 +79,7 @@
                                                     <td>@v.Codigo</td>
                                                     <td>@v.Cliente</td>
                                                     <td>@v.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                                                    <td>@v.Usuario</td>
                                                     <td class="text-end">@v.Valor.ToString("C")</td>
                                                     <td class="text-end">
                                                         <button class="btn btn-sm btn-outline-primary"
@@ -130,9 +131,6 @@
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item d-flex justify-content-between">
                                         <span>Total Pago</span><span>@totalPago.ToString("C")</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <span>Cancelado</span><span>@totalCancelado.ToString("C")</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between fw-bold">
                                         <span>Período</span>

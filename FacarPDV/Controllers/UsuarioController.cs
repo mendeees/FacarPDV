@@ -13,10 +13,17 @@ namespace FacarPDV.Controllers
         private readonly Context _context;
         public UsuarioController(Context context) => _context = context;
 
-        // ===== Cadastro de usuário =====
+        // ===== CADASTRO DE USUÁRIO =====
+
         [HttpGet]
         public IActionResult CadastroUsuario()
         {
+            // Carrega os níveis para o select da tela de cadastro
+            ViewBag.Niveis = _context.NivelUsuario
+                .AsNoTracking()
+                .OrderBy(n => n.Descricao)
+                .ToList();
+
             return View(new Usuario());
         }
 
@@ -24,7 +31,16 @@ namespace FacarPDV.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CadastroUsuario(Usuario usuario)
         {
-            if (!ModelState.IsValid) return View(usuario);
+            // Garante que, se der erro de validação, o ViewBag.Niveis exista
+            ViewBag.Niveis = _context.NivelUsuario
+                .AsNoTracking()
+                .OrderBy(n => n.Descricao)
+                .ToList();
+
+            if (!ModelState.IsValid)
+            {
+                return View(usuario);
+            }
 
             // login único
             if (_context.Usuario.Any(u => u.Login == usuario.Login))
@@ -53,10 +69,12 @@ namespace FacarPDV.Controllers
             }
 
             usuario.Salvar(_context);
+            TempData["OkUsuario"] = "Usuário cadastrado com sucesso.";
             return RedirectToAction(nameof(AlterarNivelUsuario));
         }
 
-        // ===== CRUD de Níveis =====
+        // ===== CRUD de NÍVEIS =====
+
         [HttpGet]
         public IActionResult CadastroNivelUsuario()
         {
@@ -68,7 +86,8 @@ namespace FacarPDV.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateNivelUsuario(NivelUsuario nivel)
         {
-            if (!ModelState.IsValid) return RedirectToAction(nameof(CadastroNivelUsuario));
+            if (!ModelState.IsValid)
+                return RedirectToAction(nameof(CadastroNivelUsuario));
 
             if (_context.NivelUsuario.Any(n => n.Descricao == nivel.Descricao))
             {
@@ -99,7 +118,8 @@ namespace FacarPDV.Controllers
             return RedirectToAction(nameof(CadastroNivelUsuario));
         }
 
-        // ===== Listar/Buscar usuários + carregar combos =====
+        // ===== LISTAR/BUSCAR USUÁRIOS + CARREGAR COMBOS =====
+
         [HttpGet]
         public IActionResult AlterarNivelUsuario(string q = null, int? codigo = null)
         {
@@ -135,7 +155,8 @@ namespace FacarPDV.Controllers
             return View(usuario);
         }
 
-        // ===== Salvar alteração de nível (POST separado) =====
+        // ===== SALVAR ALTERAÇÃO DE NÍVEL =====
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SalvarNivelUsuario(int id, int nivelId)

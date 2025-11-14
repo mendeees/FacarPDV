@@ -1,7 +1,9 @@
 ﻿@model Domain.Domain.Usuario
+@using Domain.Domain
 
 @{
     ViewData["Title"] = "Cadastro de Usuário";
+    var niveis = ViewBag.Niveis as List<NivelUsuario>;
 }
 
 <div class="container mt-5">
@@ -40,6 +42,27 @@
                                 <span asp-validation-for="Senha" class="text-danger"></span>
                             </div>
                         </div>
+
+                        <!-- NOVO BLOCO: NÍVEL DO USUÁRIO -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="NivelId" class="form-label">Nível de usuário</label>
+                                <select asp-for="NivelId" id="NivelId" class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    @if (niveis != null)
+                                    {
+                                        foreach (var n in niveis)
+                                        {
+                                            <option value="@n.Id" selected="@(Model != null && Model.NivelId == n.Id ? "selected" : null)">
+                                                @n.Descricao
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="NivelId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- FIM BLOCO NÍVEL -->
 
                         <div class="d-flex justify-content-end mt-4">
                             <button type="submit" class="btn btn-success me-2 px-4">

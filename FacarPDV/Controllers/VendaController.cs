@@ -145,6 +145,7 @@ namespace FacarPDV.Controllers
             var venda = new Venda
             {
                 ClienteId = cliente.Id,
+                UsuarioId = (int?)HttpContext.Session.GetInt32("UsuarioId"),
                 DataEmissao = DateTime.Now,
                 ValorTotal = cart.Sum(i => i.Subtotal)
             };

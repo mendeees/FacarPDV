@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Domain.Domain.Cliente>
+
 @{
-    ViewData["Title"] = "Cadastro de Clientes";
+    ViewData["Title"] = "Pesquisa de Clientes";
 }
 
 <div class="container mt-5">
@@ -18,12 +19,16 @@
                     }
 
                     <!-- BUSCA -->
-                    <form method="get" asp-action="CadastroCliente" class="mb-4">
+                    <form method="get" asp-action="PesquisaCliente" class="mb-4">
                         <div class="row g-2 align-items-end">
                             <div class="col-md-9">
-                                <label for="q" class="form-label">Verifique se o cliente existe (nome, CPF ou e-mail)</label>
-                                <input type="text" class="form-control" id="q" name="q"
-                                       value="@(ViewBag.Q ?? "")" placeholder="Digite para filtrar..." />
+                                <label for="q" class="form-label">Buscar (código, nome, CPF, telefone ou e-mail)</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="q"
+                                       name="q"
+                                       value="@(ViewBag.Q ?? "")"
+                                       placeholder="Digite para filtrar..." />
                             </div>
                             <div class="col-md-2 d-grid">
                                 <label class="form-label invisible">Buscar</label>
@@ -33,40 +38,19 @@
                             </div>
                             <div class="col-md-1 d-grid">
                                 <label class="form-label invisible">Limpar</label>
-                                <a asp-action="CadastroCliente" class="btn btn-outline-dark">
+                                <a asp-action="PesquisaCliente" class="btn btn-outline-dark">
                                     Limpar
                                 </a>
                             </div>
                         </div>
                     </form>
 
-                    <!-- CADASTRO -->
-                    <form asp-action="CreateCliente" method="post" autocomplete="off" class="mb-4">
-                        @Html.AntiForgeryToken()
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Nome *</label>
-                                <input name="Nome" class="form-control" required />
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">CPF</label>
-                                <input name="CPF" class="form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Telefone</label>
-                                <input name="Telefone" class="form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">E-mail</label>
-                                <input name="Email" type="email" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mt-3">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check-circle"></i> Salvar
-                            </button>
-                        </div>
-                    </form>
+                    <div class="d-flex justify-content-end mb-3">
+                        <!-- Opcional: atalho para cadastro -->
+                        <a asp-controller="Cliente" asp-action="CadastroCliente" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Novo Cliente
+                        </a>
+                    </div>
 
                     <!-- LISTA -->
                     <div class="table-responsive">
@@ -94,11 +78,15 @@
                                             <td>@c.Email</td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a asp-action="Editar" asp-route-id="@c.Id"
+                                                    <a asp-controller="Cliente"
+                                                       asp-action="Editar"
+                                                       asp-route-id="@c.Id"
                                                        class="btn btn-sm btn-primary me-2">
                                                         <i class="bi bi-pencil-square"></i> Editar
                                                     </a>
-                                                    <form asp-action="Excluir" method="post"
+                                                    <form asp-controller="Cliente"
+                                                          asp-action="Excluir"
+                                                          method="post"
                                                           onsubmit="return confirm('Excluir este cliente?');"
                                                           class="d-inline">
                                                         @Html.AntiForgeryToken()
