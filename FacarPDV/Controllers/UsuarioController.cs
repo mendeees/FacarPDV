@@ -6,6 +6,8 @@ using System.Linq;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
+    [AdminFilter]
     public class UsuarioController : Controller
     {
         private readonly Context _context;

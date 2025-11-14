@@ -9,6 +9,7 @@ using System.Text.Json;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
     public class VendaController : Controller
     {
         private readonly Context _context;

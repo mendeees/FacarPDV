@@ -35,24 +35,6 @@
                                 <label class="form-label">Cliente</label>
                                 <input name="cliente" class="form-control" value="@qCliente" placeholder="Nome do cliente" />
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Pagamento</label>
-                                <select name="pagamento" class="form-select">
-                                    @foreach (var p in new[] { "Todos", "Dinheiro", "Cartão", "Pix" })
-                                    {
-                                        <option value="@p" selected="@(qPagamento == p)">@p</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-select">
-                                    @foreach (var s in new[] { "Todos", "Pago", "Pendente", "Cancelado" })
-                                    {
-                                        <option value="@s" selected="@(qStatus == s)">@s</option>
-                                    }
-                                </select>
-                            </div>
                             <div class="col-md-3">
                                 <label class="form-label">Período</label>
                                 <div class="input-group">
@@ -66,8 +48,6 @@
                         <div class="d-flex gap-2 mt-3">
                             <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
                             <a asp-action="PesquisaVendas" class="btn btn-outline-secondary">Limpar</a>
-                            <button type="button" class="btn btn-outline-success"><i class="bi bi-printer"></i> Imprimir</button>
-                            <button type="button" class="btn btn-outline-warning"><i class="bi bi-file-earmark-spreadsheet"></i> Exportar</button>
                         </div>
                     </form>
 
@@ -79,11 +59,9 @@
                                         <tr>
                                             <th>Código</th>
                                             <th>Cliente</th>
-                                            <th>Data/Hora</th>
-                                            <th>Pagamento</th>
+                                            <th>Data/Hora</th>>
                                             <th class="text-end">Valor</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-end">Ações</th>
+                                            <th class="text-end">Visualizar Itens</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -97,20 +75,11 @@
                                         {
                                             foreach (var v in Model)
                                             {
-                                                var badge = v.Status switch
-                                                {
-                                                    "Pago" => "success",
-                                                    "Cancelado" => "danger",
-                                                    "Pendente" => "warning",
-                                                    _ => "secondary"
-                                                };
-                                                <tr class="@(v.Status == "Cancelado" ? "table-danger" : null)">
+                                                <tr>
                                                     <td>@v.Codigo</td>
                                                     <td>@v.Cliente</td>
                                                     <td>@v.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
-                                                    <td>@(string.IsNullOrEmpty(v.Pagamento) ? "-" : v.Pagamento)</td>
                                                     <td class="text-end">@v.Valor.ToString("C")</td>
-                                                    <td class="text-center"><span class="badge bg-@badge">@v.Status</span></td>
                                                     <td class="text-end">
                                                         <button class="btn btn-sm btn-outline-primary"
                                                                 data-bs-toggle="modal"

@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
     public class PesquisaController : Controller
     {
         private readonly Context _context;
@@ -58,8 +59,6 @@ namespace FacarPDV.Controllers
                     Codigo = "V-" + v.Id.ToString("D4"),
                     Cliente = v.Cliente != null ? v.Cliente.Nome : "",
                     DataHora = v.DataEmissao,
-                    Pagamento = "Pix",   // substitua pelo campo real, se existir
-                    Status = "Pago",     // idem
                     Valor = v.ValorTotal
                 });
 
@@ -69,12 +68,6 @@ namespace FacarPDV.Controllers
 
             if (!string.IsNullOrWhiteSpace(cliente))
                 query = query.Where(x => EF.Functions.Like(x.Cliente, $"%{cliente.Trim()}%"));
-
-            if (!string.IsNullOrWhiteSpace(pagamento) && pagamento != "Todos")
-                query = query.Where(x => x.Pagamento == pagamento);
-
-            if (!string.IsNullOrWhiteSpace(status) && status != "Todos")
-                query = query.Where(x => x.Status == status);
 
             if (DateTime.TryParse(de, out var dataDe))
                 query = query.Where(x => x.DataHora >= dataDe.Date);

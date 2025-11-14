@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
     public class EstoqueController : Controller
     {
         private readonly Context _context;
