@@ -154,6 +154,17 @@ namespace FacarPDV.Controllers
             return Json(produtos);
         }
 
+        [HttpGet]
+        public JsonResult BuscarCliente(string termo)
+        {
+            var clientes = _context.Cliente
+                .Where(c => string.IsNullOrEmpty(termo) || c.Nome.Contains(termo) || c.Id.ToString().Contains(termo))
+                .Select(c => new { id = c.Id, label = c.Nome })
+                .Take(50)
+                .ToList();
+            return Json(clientes);
+        }
+
         // === DETALHE DE VENDA (usado no modal) ===
         [HttpGet]
         public IActionResult DetalheVenda(int id)

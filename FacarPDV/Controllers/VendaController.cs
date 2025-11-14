@@ -85,6 +85,19 @@ namespace FacarPDV.Controllers
                 return RedirectToAction(nameof(Venda), new { codigoCliente });
             }
 
+            // Verifica saldo de estoque
+            int saldo = Estoque.GetSaldo(_context, prod.ProdutoId);
+            if (saldo == -1)
+            {
+                TempData["Erro"] = "Produto ainda não possui estoque cadastrado.";
+                return RedirectToAction(nameof(Venda), new { codigoCliente });
+            }
+            if (quantidade > saldo)
+            {
+                TempData["Erro"] = $"Saldo insuficiente. Saldo atual: {saldo} unidade(s).";
+                return RedirectToAction(nameof(Venda), new { codigoCliente });
+            }
+
             var cart = GetCart();
             var item = cart.FirstOrDefault(i => i.ProdutoId == prod.ProdutoId);
             if (item == null)
@@ -159,7 +172,7 @@ namespace FacarPDV.Controllers
             TempData.Remove(CART_KEY);
             TempData["Ok"] = $"Venda #{venda.Id} registrada com sucesso.";
 
-            return RedirectToAction(nameof(Venda), new { codigoCliente = cliente.Id });
+            return RedirectToAction(nameof(Venda));
         }
 
         public IActionResult Caixa() => View();

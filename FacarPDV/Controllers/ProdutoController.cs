@@ -13,6 +13,25 @@ namespace FacarPDV.Controllers
         }
 
         [HttpGet]
+        public IActionResult CadastroProduto()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Produto model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.Salvar(_context);
+                TempData["Ok"] = "Produto cadastrado com sucesso.";
+                return RedirectToAction("PesquisaProduto", "Pesquisa");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
         public IActionResult Editar(int id)
         {
             var produto = new Produto().BuscarPorId(_context, id);
