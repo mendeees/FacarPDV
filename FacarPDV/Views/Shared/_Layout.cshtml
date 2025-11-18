@@ -65,7 +65,6 @@
                                data-bs-toggle="dropdown" aria-expanded="false">Usuários</a>
                             <ul class="dropdown-menu" aria-labelledby=" bvb usuariosDropdown">
                                 <li><a class="dropdown-item" asp-controller="Usuario" asp-action="CadastroUsuario">Cadastrar Usuário</a></li>
-                                <li><a class="dropdown-item" asp-controller="Usuario" asp-action="CadastroNivelUsuario">Cadastrar Nível</a></li>
                                 <li><a class="dropdown-item" asp-controller="Usuario" asp-action="AlterarNivelUsuario">Alterar Nível</a></li>
                             </ul>
                         </li>
@@ -78,11 +77,11 @@
                                 <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaProduto">Produto</a></li>
                                 <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaVendas">Vendas</a></li>
                                 <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaEstoque">Estoque</a></li>
-                                @* Se criar pesquisa de clientes no futuro:
-                            <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaClientes">Clientes</a></li>
-                            *@
+                                <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaCliente">Cliente</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Login" asp-action="Logout">Logout</a>
                     </ul>
 
                     @* Espaço para itens à direita (usuário, sair, etc.) *@

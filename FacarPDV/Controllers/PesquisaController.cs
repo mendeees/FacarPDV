@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
     public class PesquisaController : Controller
     {
         private readonly Context _context;
@@ -46,35 +47,29 @@ namespace FacarPDV.Controllers
         // === PESQUISA DE VENDAS COM FILTROS E LISTAGEM ===
         [HttpGet]
         public IActionResult PesquisaVendas(
-            string? codigo, string? cliente, string? pagamento = "Todos", string? status = "Todos",
+            string? codigo, string? cliente, string? usuario,
             string? de = null, string? ate = null, int page = 1, int pageSize = 20)
         {
             var query = _context.Set<Venda>()
-                .AsNoTracking()
-                .Include(v => v.Cliente)
-                .Select(v => new VendaListItemVM
-                {
-                    Id = v.Id,
-                    Codigo = "V-" + v.Id.ToString("D4"),
-                    Cliente = v.Cliente != null ? v.Cliente.Nome : "",
-                    DataHora = v.DataEmissao,
-                    Pagamento = "Pix",   // substitua pelo campo real, se existir
-                    Status = "Pago",     // idem
-                    Valor = v.ValorTotal
-                });
+     .AsNoTracking()
+     .Include(v => v.Cliente)
+     .Include(v => v.Usuario)   
+     .Select(v => new VendaListItemVM
+     {
+         Id = v.Id,
+         Codigo = v.Id.ToString(),
+         Cliente = v.Cliente != null ? v.Cliente.Nome : "",
+         Usuario = v.Usuario != null ? v.Usuario.Nome : "",
+         DataHora = v.DataEmissao,
+         Valor = v.ValorTotal
+     });
 
             // === FILTROS ===
             if (!string.IsNullOrWhiteSpace(codigo))
-                query = query.Where(x => x.Codigo.Contains(codigo.Trim(), StringComparison.OrdinalIgnoreCase));
+                query = query.Where(x => x.Codigo.Contains(codigo.Trim()));
 
             if (!string.IsNullOrWhiteSpace(cliente))
                 query = query.Where(x => EF.Functions.Like(x.Cliente, $"%{cliente.Trim()}%"));
-
-            if (!string.IsNullOrWhiteSpace(pagamento) && pagamento != "Todos")
-                query = query.Where(x => x.Pagamento == pagamento);
-
-            if (!string.IsNullOrWhiteSpace(status) && status != "Todos")
-                query = query.Where(x => x.Status == status);
 
             if (DateTime.TryParse(de, out var dataDe))
                 query = query.Where(x => x.DataHora >= dataDe.Date);
@@ -85,7 +80,7 @@ namespace FacarPDV.Controllers
             // === PAGINAÇÃO ===
             var totalRegistros = query.Count();
             var vendas = query
-                .OrderByDescending(x => x.DataHora)
+                .OrderByDescending(x => x.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -95,14 +90,11 @@ namespace FacarPDV.Controllers
             ViewBag.Page = page;
             ViewBag.Pages = (int)Math.Ceiling(totalRegistros / (double)pageSize);
             ViewBag.HasPaging = totalRegistros > pageSize;
-            ViewBag.TotalPago = vendas.Where(x => x.Status == "Pago").Sum(x => x.Valor);
-            ViewBag.TotalCancelado = vendas.Where(x => x.Status == "Cancelado").Sum(x => x.Valor);
+            ViewBag.TotalPago = vendas.Sum(x => x.Valor);
 
             // === FILTROS (ViewBag) ===
             ViewBag.FiltroCodigo = codigo;
             ViewBag.FiltroCliente = cliente;
-            ViewBag.FiltroPagamento = pagamento;
-            ViewBag.FiltroStatus = status;
             ViewBag.FiltroDe = de;
             ViewBag.FiltroAte = ate;
 
@@ -153,6 +145,50 @@ namespace FacarPDV.Controllers
                 .ToList();
             return Json(produtos);
         }
+
+        [HttpGet]
+        public IActionResult PesquisaCliente(string? q = null)
+        {
+            var query = _context.Cliente
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var termo = q.Trim();
+
+                query = query.Where(c =>
+                    // Código (Id)
+                    c.Id.ToString().Contains(termo) ||
+
+                    // Nome
+                    (!string.IsNullOrEmpty(c.Nome) &&
+                     EF.Functions.Like(c.Nome, $"%{termo}%")) ||
+
+                    // CPF
+                    (!string.IsNullOrEmpty(c.CPF) &&
+                     EF.Functions.Like(c.CPF, $"%{termo}%")) ||
+
+                    // Telefone
+                    (!string.IsNullOrEmpty(c.Telefone) &&
+                     EF.Functions.Like(c.Telefone, $"%{termo}%")) ||
+
+                    // E-mail
+                    (!string.IsNullOrEmpty(c.Email) &&
+                     EF.Functions.Like(c.Email, $"%{termo}%"))
+                );
+            }
+
+            var clientes = query
+                .OrderBy(c => c.Nome)
+                .ToList();
+
+            ViewBag.Q = q;
+
+            return View(clientes);
+        }
+
+
 
         [HttpGet]
         public JsonResult BuscarCliente(string termo)

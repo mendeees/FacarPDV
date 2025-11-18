@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
+    [AdminFilter]
     public class ProdutoController : Controller
     {
         private readonly Context _context;
