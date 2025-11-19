@@ -1,0 +1,266 @@
+﻿@using Domain.Domain
+@{
+    ViewData["Title"] = "Ponto de Venda";
+    var clienteSel = ViewBag.Cliente as Cliente;
+    var produtoSel = ViewBag.Produto as Produto;
+    var produtoId = produtoSel?.ProdutoId ?? 0;
+    var produtoNome = produtoSel?.Nome ?? "";
+    var clienteId = clienteSel?.Id ?? 0;
+    var clienteNome = clienteSel?.Nome ?? "";
+    var itens = ViewBag.Itens as List<FacarPDV.Controllers.VendaController.ItemCarrinho> ?? new();
+    decimal total = ViewBag.Total ?? 0M;
+}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body p-4">
+
+                    <!-- BUSCA de Cliente e Produto -->
+                    <form autocomplete="off" class="mb-4">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Cliente</label>
+                                <div class="input-group">
+                                    <input type="text" id="clienteNome" class="form-control" value="@clienteNome" placeholder="Selecione o cliente" readonly required />
+                                    <!-- Remova este campo oculto duplicado -->
+                                    <!-- <input type="hidden" id="clienteId" name="codigoCliente" value="@clienteId" /> -->
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalPesquisaCliente" @(clienteId > 0 ? "disabled" : "")>
+                                        <i class="bi bi-search"></i> Pesquisar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Produto</label>
+                                <div class="input-group">
+                                    <input type="text" id="produtoNome" class="form-control" value="@produtoNome" placeholder="Selecione o produto" readonly required />
+                                    <!-- Remova este campo oculto duplicado -->
+                                    <!-- <input type="hidden" id="produtoId" name="codigoProduto" value="@produtoId" /> -->
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalPesquisaProduto">
+                                        <i class="bi bi-search"></i> Pesquisar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- /BUSCA -->
+                    <!-- ADICIONAR ITEM (POST) -->
+                    <form asp-action="RegistrarVenda" method="post" autocomplete="off" class="mb-3">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="codigoCliente" id="clienteId" value="@clienteId" />
+                        <input type="hidden" name="codigoProduto" id="produtoId" value="@produtoId" />
+                        <div class="row align-items-end">
+                            <div class="col-md-4">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <div class="input-group">
+                                    <input type="number" id="quantidade" name="quantidade" class="form-control" value="1" min="1" required />
+                                    <button type="submit" id="btnAdicionar" class="btn btn-primary" disabled>
+                                        <i class="bi bi-cart-plus"></i> Adicionar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- === /ADICIONAR ITEM === -->
+                    <!-- === LISTA DO CARRINHO === -->
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Produto</th>
+                                    <th class="text-center">Qtde</th>
+                                    <th class="text-end">Preço Unit.</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (itens.Count == 0)
+                                {
+                                    <tr><td colspan="6" class="text-center text-muted">Nenhum item adicionado</td></tr>
+                                }
+                                else
+                                {
+                                    foreach (var i in itens)
+                                    {
+                                        <tr>
+                                            <td>@i.ProdutoId</td>
+                                            <td>@i.Nome</td>
+                                            <td class="text-center">@i.Quantidade</td>
+                                            <td class="text-end">@i.Preco.ToString("C")</td>
+                                            <td class="text-end">@i.Subtotal.ToString("C")</td>
+                                            <td class="text-center">
+                                                <form asp-action="RemoverItem" method="post" class="d-inline"
+                                                      onsubmit="return confirm('Remover este item?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="produtoId" value="@i.ProdutoId" />
+                                                    <input type="hidden" name="codigoCliente" value="@clienteId" />
+                                                    <button class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-x-circle"></i> Remover
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <h5>Total: <span class="fw-bold">@total.ToString("C")</span></h5>
+                        <form asp-action="FinalizarVenda" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="codigoCliente" value="@clienteId" />
+                            <button class="btn btn-success px-4"
+                            @(itens.Count == 0 || clienteId == 0 ? "disabled" : "")>
+                                <i class="bi bi-cash-coin"></i> Finalizar Venda
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pesquisa Produto -->
+<div class="modal fade" id="modalPesquisaProduto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Pesquisar Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="filtroProduto" class="form-control mb-3" placeholder="Filtrar por nome ou código..." />
+                <div id="listaProdutos">
+                    <div class="text-muted">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pesquisa Cliente -->
+<div class="modal fade" id="modalPesquisaCliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Pesquisar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="filtroCliente" class="form-control mb-3" placeholder="Filtrar por nome ou código..." />
+                <div id="listaClientes">
+                    <div class="text-muted">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Modal Produto
+        $('#modalPesquisaProduto').on('show.bs.modal', function () {
+            carregarProdutos('');
+        });
+        $('#filtroProduto').on('input', function () {
+            carregarProdutos($(this).val());
+        });
+        function carregarProdutos(filtro) {
+            $('#listaProdutos').html('<div class="text-muted">Carregando...</div>');
+            $.get('/Pesquisa/BuscarProduto', { termo: filtro }, function (data) {
+                if (!data || data.length === 0) {
+                    $('#listaProdutos').html('<div class="text-danger">Nenhum produto encontrado.</div>');
+                    return;
+                }
+                let html = '<table class="table table-sm table-hover"><thead><tr><th>Código</th><th>Nome</th><th>Preço</th><th></th></tr></thead><tbody>';
+                data.forEach(function (p) {
+                    html += `<tr>
+                        <td>${p.id}</td>
+                        <td>${p.label}</td>
+                        <td>${p.preco ? p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}</td>
+                        <td><button type="button" class="btn btn-warning btn-sm" onclick="selecionarProduto(${p.id}, '${p.label}')">Selecionar</button></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                $('#listaProdutos').html(html);
+            });
+        }
+        window.selecionarProduto = function (id, nome) {
+            $('#produtoId').val(id);
+            $('#produtoNome').val(nome);
+            $('#modalPesquisaProduto').modal('hide');
+        }
+
+        // Modal Cliente
+        $('#modalPesquisaCliente').on('show.bs.modal', function () {
+            carregarClientes('');
+        });
+        $('#filtroCliente').on('input', function () {
+            carregarClientes($(this).val());
+        });
+        function carregarClientes(filtro) {
+            $('#listaClientes').html('<div class="text-muted">Carregando...</div>');
+            $.get('/Pesquisa/BuscarCliente', { termo: filtro }, function (data) {
+                if (!data || data.length === 0) {
+                    $('#listaClientes').html('<div class="text-danger">Nenhum cliente encontrado.</div>');
+                    return;
+                }
+                let html = '<table class="table table-sm table-hover"><thead><tr><th>Código</th><th>Nome</th><th></th></tr></thead><tbody>';
+                data.forEach(function (c) {
+                    html += `<tr>
+                        <td>${c.id}</td>
+                        <td>${c.label}</td>
+                        <td><button type="button" class="btn btn-warning btn-sm" onclick="selecionarCliente(${c.id}, '${c.label}')">Selecionar</button></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                $('#listaClientes').html(html);
+            });
+        }
+        window.selecionarCliente = function (id, nome) {
+            $('#clienteId').val(id);
+            $('#clienteNome').val(nome);
+            $('#modalPesquisaCliente').modal('hide');
+        }
+
+                function atualizarBotaoAdicionar() {
+            const btn = document.getElementById('btnAdicionar');
+            const clienteId = document.getElementById('clienteId').value;
+            const produtoId = document.getElementById('produtoId').value;
+            btn.disabled = !(clienteId > 0 && produtoId > 0);
+        }
+
+        window.selecionarCliente = function (id, nome) {
+            $('#clienteId').val(id);
+            $('#clienteNome').val(nome);
+            $('#modalPesquisaCliente').modal('hide');
+            atualizarBotaoAdicionar();
+        }
+        window.selecionarProduto = function (id, nome) {
+            $('#produtoId').val(id);
+            $('#produtoNome').val(nome);
+            $('#modalPesquisaProduto').modal('hide');
+            atualizarBotaoAdicionar();
+        }
+
+        document.addEventListener('DOMContentLoaded', atualizarBotaoAdicionar);
+
+                window.selecionarProduto = function (id, nome) {
+            $('#produtoId').val(id);
+            $('#produtoNome').val(nome);
+            $('#modalPesquisaProduto').modal('hide');
+            atualizarBotaoAdicionar();
+        }
+
+
+    </script>
+}

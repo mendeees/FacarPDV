@@ -1,46 +1,126 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@* Views/Shared/_Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FacarPDV</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FacarPDV.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100 bg-secondary">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-black border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FacarPDV</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index" title="Início">
+                    <img src="~/imagens/logoFacar.png" height="40" alt="FacarPDV" />
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Início</a>
+                        </li>
+
+                        <!-- Vendas -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="vendasDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">Vendas</a>
+                            <ul class="dropdown-menu" aria-labelledby="vendasDropdown">
+                                <li><a class="dropdown-item" asp-controller="Venda" asp-action="Venda">Nova Venda</a></li>
+                                @* <li><a class="dropdown-item" asp-controller="Venda" asp-action="Caixa">Caixa</a></li> *@
+                            </ul>
+                        </li>
+
+                        <!-- Cadastros -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="cadastroDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">Cadastro</a>
+                            <ul class="dropdown-menu" aria-labelledby="cadastroDropdown">
+                                <li><a class="dropdown-item" asp-controller="Produto" asp-action="CadastroProduto">Produto</a></li>
+                                <li><a class="dropdown-item" asp-controller="Cliente" asp-action="CadastroCliente">Cliente</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Estoque -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="estoqueDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">Estoque</a>
+                            <ul class="dropdown-menu" aria-labelledby="estoqueDropdown">
+                                <li><a class="dropdown-item" asp-controller="Estoque" asp-action="Entrada">Entrada</a></li>
+                                <li><a class="dropdown-item" asp-controller="Estoque" asp-action="Saida">Saída</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Usuários -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="usuariosDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">Usuários</a>
+                            <ul class="dropdown-menu" aria-labelledby=" bvb usuariosDropdown">
+                                <li><a class="dropdown-item" asp-controller="Usuario" asp-action="CadastroUsuario">Cadastrar Usuário</a></li>
+                                <li><a class="dropdown-item" asp-controller="Usuario" asp-action="AlterarNivelUsuario">Alterar Nível</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Pesquisas -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="pesquisasDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">Pesquisas</a>
+                            <ul class="dropdown-menu" aria-labelledby="pesquisasDropdown">
+                                <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaProduto">Produto</a></li>
+                                <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaVendas">Vendas</a></li>
+                                <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaEstoque">Estoque</a></li>
+                                <li><a class="dropdown-item" asp-controller="Pesquisa" asp-action="PesquisaCliente">Cliente</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                            <a class="nav-link text-white" asp-controller="Login" asp-action="Logout">Logout</a>
                     </ul>
+
+                    @* Espaço para itens à direita (usuário, sair, etc.) *@
+                    <ul class="navbar-nav"></ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FacarPDV - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main" class="flex-fill">
+        <div class="container pb-3">
+
+            @* Alertas globais padrão *@
+            @if (TempData["Ok"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>@TempData["Ok"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            }
+            @if (TempData["Erro"] != null || TempData["ErroNivel"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>@(TempData["Erro"] ?? TempData["ErroNivel"])
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="bg-black text-white mt-auto py-3 border-top">
+        <div class="container text-center">
+            <img src="~/imagens/logoFacar.png" height="20" alt="FacarPDV" class="mb-2" />
+            &copy; @DateTime.Today.Year
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

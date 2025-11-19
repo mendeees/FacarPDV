@@ -1,0 +1,31 @@
+﻿using Domain.Domain;
+using Domain.EF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FacarPDV.Controllers
+{
+    [LoginFilter]
+    [AdminFilter]
+    public class CadastroController : Controller
+    {
+        private readonly Context _context;
+        public CadastroController(Context context) => _context = context;
+
+        // GET: /Cadastro/CadastroProduto
+        public IActionResult CadastroProduto()
+        {
+            return View(new Produto()); // casa com @model Produtos
+        }
+
+        // POST: /Cadastro/CreateProduto
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateProduto(Produto produto)
+        {
+            if (!ModelState.IsValid) return View("CadastroProduto", produto);
+
+            produto.Salvar(_context);
+            return RedirectToAction(nameof(CadastroProduto));
+        }
+    }
+}

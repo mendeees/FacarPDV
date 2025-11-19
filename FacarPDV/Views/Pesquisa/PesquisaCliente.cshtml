@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Domain.Domain.Cliente>
+
+@{
+    ViewData["Title"] = "Pesquisa de Clientes";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (TempData["Ok"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Ok"]</div>
+                    }
+
+                    <!-- BUSCA -->
+                    <form method="get" asp-action="PesquisaCliente" class="mb-4">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-9">
+                                <label for="q" class="form-label">Buscar (código, nome, CPF, telefone ou e-mail)</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="q"
+                                       name="q"
+                                       value="@(ViewBag.Q ?? "")"
+                                       placeholder="Digite para filtrar..." />
+                            </div>
+                            <div class="col-md-2 d-grid">
+                                <label class="form-label invisible">Buscar</label>
+                                <button class="btn btn-outline-warning" type="submit">
+                                    <i class="bi bi-search"></i> Buscar
+                                </button>
+                            </div>
+                            <div class="col-md-1 d-grid">
+                                <label class="form-label invisible">Limpar</label>
+                                <a asp-action="PesquisaCliente" class="btn btn-outline-dark">
+                                    Limpar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="d-flex justify-content-end mb-3">
+                        <!-- Opcional: atalho para cadastro -->
+                        <a asp-controller="Cliente" asp-action="CadastroCliente" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Novo Cliente
+                        </a>
+                    </div>
+
+                    <!-- LISTA -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 90px;">Código</th>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Telefone</th>
+                                    <th>E-mail</th>
+                                    <th class="text-center" style="width: 210px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var c in Model)
+                                    {
+                                        <tr>
+                                            <td>@c.Id</td>
+                                            <td>@c.Nome</td>
+                                            <td>@c.CPF</td>
+                                            <td>@c.Telefone</td>
+                                            <td>@c.Email</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <a asp-controller="Cliente"
+                                                       asp-action="Editar"
+                                                       asp-route-id="@c.Id"
+                                                       class="btn btn-sm btn-primary me-2">
+                                                        <i class="bi bi-pencil-square"></i> Editar
+                                                    </a>
+                                                    <form asp-controller="Cliente"
+                                                          asp-action="Excluir"
+                                                          method="post"
+                                                          onsubmit="return confirm('Excluir este cliente?');"
+                                                          class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@c.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-trash"></i> Excluir
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            Nenhum cliente encontrado.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,12 @@
 using System.Diagnostics;
 using FacarPDV.Models;
+using Domain.Domain;
+using Domain.EF;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FacarPDV.Controllers
 {
+    [LoginFilter]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -14,11 +17,6 @@ namespace FacarPDV.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }

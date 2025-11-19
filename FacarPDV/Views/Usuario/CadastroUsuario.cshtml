@@ -1,0 +1,97 @@
+﻿@model Domain.Domain.Usuario
+@using Domain.Domain
+
+@{
+    ViewData["Title"] = "Cadastro de Usuário";
+    var niveis = ViewBag.Niveis as List<NivelUsuario>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="CadastroUsuario" method="post" autocomplete="off">
+                        <div class="row mb-3">
+                            <div class="col-md-10">
+                                <label for="Nome" class="form-label">Nome</label>
+                                <input asp-for="Nome" id="Nome" class="form-control" placeholder="Digite o nome" required />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="Login" class="form-label">Login</label>
+                                <input asp-for="Login" id="Login" class="form-control" placeholder="Digite o login" required />
+                                <span asp-validation-for="Login" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Senha" class="form-label">Senha</label>
+                                <div class="input-group">
+                                    <input asp-for="Senha" id="Senha" type="password" class="form-control" placeholder="Digite a senha" required />
+                                    <button type="button" class="btn btn-outline-warning" id="toggleSenha">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Senha" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- NOVO BLOCO: NÍVEL DO USUÁRIO -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="NivelId" class="form-label">Nível de usuário</label>
+                                <select asp-for="NivelId" id="NivelId" class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    @if (niveis != null)
+                                    {
+                                        foreach (var n in niveis)
+                                        {
+                                            <option value="@n.Id" selected="@(Model != null && Model.NivelId == n.Id ? "selected" : null)">
+                                                @n.Descricao
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="NivelId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- FIM BLOCO NÍVEL -->
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-success me-2 px-4">
+                                <i class="bi bi-check-circle"></i> Salvar
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-danger px-4">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                        @Html.AntiForgeryToken()
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const senhaInput = document.getElementById("Senha");
+        const toggleSenha = document.getElementById("toggleSenha");
+        const icon = toggleSenha.querySelector("i");
+
+        toggleSenha.addEventListener("click", () => {
+            const isPassword = senhaInput.type === "password";
+            senhaInput.type = isPassword ? "text" : "password";
+            icon.classList.toggle("bi-eye");
+            icon.classList.toggle("bi-eye-slash");
+        });
+    </script>
+}

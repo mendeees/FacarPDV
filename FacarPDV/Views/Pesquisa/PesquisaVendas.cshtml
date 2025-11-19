@@ -1,0 +1,193 @@
+﻿@model IEnumerable<FacarPDV.Models.VendaListItemVM>
+@{
+    ViewData["Title"] = "Pesquisa de Vendas";
+
+    // Dados auxiliares vindos do controller (opcional)
+    var totalRegistros = ViewBag.TotalRegistros as int? ?? Model.Count();
+    var totalPago = ViewBag.TotalPago as decimal? ?? Model.Sum(x => x.Valor);
+
+    string qCodigo = ViewBag.FiltroCodigo as string ?? "";
+    string qCliente = ViewBag.FiltroCliente as string ?? "";
+    string qPagamento = ViewBag.FiltroPagamento as string ?? "Todos";
+    string qStatus = ViewBag.FiltroStatus as string ?? "Todos";
+    string qDe = ViewBag.FiltroDe as string ?? "";
+    string qAte = ViewBag.FiltroAte as string ?? "";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="card shadow border-0">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4 class="mb-0">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- FILTROS (GET) -->
+                    <form method="get" asp-action="PesquisaVendas" class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-2">
+                                <label class="form-label">Código</label>
+                                <input name="codigo" class="form-control" value="@qCodigo" placeholder="Ex: 1" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cliente</label>
+                                <input name="cliente" class="form-control" value="@qCliente" placeholder="Nome do cliente" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Período</label>
+                                <div class="input-group">
+                                    <input type="date" name="de" value="@qDe" class="form-control" />
+                                    <span class="input-group-text">até</span>
+                                    <input type="date" name="ate" value="@qAte" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
+                            <a asp-action="PesquisaVendas" class="btn btn-outline-secondary">Limpar</a>
+                        </div>
+                    </form>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Cliente</th>
+                                            <th>Data/Hora</th>
+                                            <th>Vendedor</th>
+                                            <th class="text-end">Valor</th>
+                                            <th class="text-end">Visualizar Itens</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!Model.Any())
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Nenhuma venda encontrada</td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            foreach (var v in Model)
+                                            {
+                                                <tr>
+                                                    <td>@v.Codigo</td>
+                                                    <td>@v.Cliente</td>
+                                                    <td>@v.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                                                    <td>@v.Usuario</td>
+                                                    <td class="text-end">@v.Valor.ToString("C")</td>
+                                                    <td class="text-end">
+                                                        <button class="btn btn-sm btn-outline-primary"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#mdDetalhe"
+                                                                data-id="@v.Id"
+                                                                data-codigo="@v.Codigo">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @* Paginação simples opcional *@
+                            @if (ViewBag.HasPaging == true)
+                            {
+                                <nav aria-label="Paginação" class="mt-2">
+                                    <ul class="pagination">
+                                        <li class="page-item @(ViewBag.Page <= 1 ? "disabled" : null)">
+                                            <a class="page-link" asp-action="PesquisaVendas"
+                                               asp-route-page="@(ViewBag.Page - 1)"
+                                               asp-route-codigo="@qCodigo" asp-route-cliente="@qCliente"
+                                               asp-route-pagamento="@qPagamento" asp-route-status="@qStatus"
+                                               asp-route-de="@qDe" asp-route-ate="@qAte">Anterior</a>
+                                        </li>
+                                        <li class="page-item active"><span class="page-link">@ViewBag.Page</span></li>
+                                        <li class="page-item @(ViewBag.Page >= ViewBag.Pages ? "disabled" : null)">
+                                            <a class="page-link" asp-action="PesquisaVendas"
+                                               asp-route-page="@(ViewBag.Page + 1)"
+                                               asp-route-codigo="@qCodigo" asp-route-cliente="@qCliente"
+                                               asp-route-pagamento="@qPagamento" asp-route-status="@qStatus"
+                                               asp-route-de="@qDe" asp-route-ate="@qAte">Próxima</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-header bg-light d-flex justify-content-between">
+                                    <strong>Resumo</strong>
+                                    <span class="badge bg-secondary">@totalRegistros registro(s)</span>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Total Pago</span><span>@totalPago.ToString("C")</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between fw-bold">
+                                        <span>Período</span>
+                                        <span>@(string.IsNullOrEmpty(qDe) && string.IsNullOrEmpty(qAte) ? "—" : $"{qDe} a {qAte}")</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="alert alert-info">
+                                Clique no <i class="bi bi-eye"></i> para ver detalhes do pedido.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALHE -->
+<div class="modal fade" id="mdDetalhe" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes da venda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalheConteudo">
+                    <div class="text-muted">Carregando...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /* Carrega detalhes via GET quando abre o modal */
+        const md = document.getElementById('mdDetalhe');
+        md?.addEventListener('show.bs.modal', evt => {
+            const btn = evt.relatedTarget;
+            const id = btn?.getAttribute('data-id');
+            const codigo = btn?.getAttribute('data-codigo');
+            const alvo = document.getElementById('detalheConteudo');
+            if (!id || !alvo) return;
+
+            document.querySelector('#mdDetalhe .modal-title').textContent = `Detalhes do Pedido ${codigo}`;
+            alvo.innerHTML = '<div class="text-muted">Carregando...</div>';
+
+            fetch(`@Url.Action("DetalheVenda", "Pesquisa")?id=${id}`)
+                .then(r => r.text())
+                .then(html => alvo.innerHTML = html)
+                .catch(() => alvo.innerHTML = '<div class="text-danger">Falha ao carregar detalhes.</div>');
+        });
+    </script>
+}

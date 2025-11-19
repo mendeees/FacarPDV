@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Domain.Domain.Usuario>
+@using Domain.Domain
+
+@{
+    ViewData["Title"] = "Alterar Nível de Usuário";
+    var niveis = ViewBag.Niveis as List<NivelUsuario>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <!-- === BUSCA (apenas pesquisa) === -->
+                    <form asp-action="AlterarNivelUsuario" method="get" autocomplete="off" class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-md-2">
+                                <label for="codigo" class="form-label">Código</label>
+                                <input type="number" id="codigo" name="codigo"
+                                       value="@(ViewBag.Codigo ?? "")"
+                                       class="form-control" placeholder="Cód. Usuário" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="q" class="form-label">Nome ou login</label>
+                                <div class="input-group">
+                                    <input type="text" id="q" name="q"
+                                           value="@(ViewBag.Q ?? "")"
+                                           class="form-control" placeholder="Buscar por nome ou login..." />
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        <i class="bi bi-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 d-flex align-items-end">
+                                <a asp-action="AlterarNivelUsuario" class="btn btn-outline-dark ms-auto">
+                                    Limpar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- === /BUSCA === -->
+
+                    <div>
+                        <h5 class="fw-bold text-dark mb-3">Usuários cadastrados</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-center">Código</th>
+                                        <th>Nome</th>
+                                        <th class="text-center">Login</th>
+                                        <th class="text-center">Nível Atual</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var u in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@u.Id</td>
+                                            <td>@u.Nome</td>
+                                            <td class="text-center">@u.Login</td>
+                                            <td class="text-center">@u.Nivel?.Descricao</td>
+                                            <td class="text-center">
+                                                <!-- ÚNICO local que salva -->
+                                                <form asp-action="SalvarNivelUsuario" method="post" class="d-inline-flex">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@u.Id" />
+                                                    <select name="nivelId" class="form-select form-select-sm me-2" required>
+                                                        <option value="">Selecione...</option>
+                                                        @if (niveis != null)
+                                                        {
+                                                            foreach (var n in niveis)
+                                                            {
+                                                                    <option value="@n.Id" selected="@(u.NivelId == n.Id ? "selected" : null)">
+                                                                        @n.Descricao
+                                                                    </option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-check2-circle"></i> Salvar
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Nenhum usuário encontrado
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
